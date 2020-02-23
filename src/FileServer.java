@@ -10,8 +10,8 @@ import java.util.concurrent.Executors;
  */
 public class FileServer {
     static int NUM_CLIENTS = 5;
-    static int SERVER_PORT = 1;
-    static int CLIENT_PORT = 2;
+    static int SERVER_PORT = 11888;
+    static int CLIENT_PORT = 11999;
 
     static String serverOneAddress = "dc01.utdallas.edu";
     static String serverTwoAddress = "dc02.utdallas.edu";
