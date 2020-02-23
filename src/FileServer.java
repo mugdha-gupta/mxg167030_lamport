@@ -12,9 +12,7 @@ import java.util.concurrent.TimeUnit;
  * Reference for server client relationship: https://cs.lmu.edu/~ray/notes/javanetexamples/#capitalize
  */
 public class FileServer {
-    static int NUM_CLIENTS = 5;
     static int SERVER_PORT = 11888;
-    static int CLIENT_PORT = 11999;
 
     static String serverOneAddress = "dc01.utdallas.edu";
     static String serverTwoAddress = "dc02.utdallas.edu";
@@ -32,12 +30,15 @@ public class FileServer {
         switch (serverNum){
             case 1:
                 Server1.initializeServer();
+                Server1.closeServer();
                 break;
             case 2:
                 Server2.initializeServer2();
+                Server2.closeServer();
                 break;
             case 3:
                 Server3.initializeServer3();
+                Server3.closeServer();
                 break;
             default:
                 System.err.println("Server number is invalid");
