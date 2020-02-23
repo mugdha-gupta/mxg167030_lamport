@@ -55,9 +55,9 @@ public class FileServer {
         ServerSocket listener = new ServerSocket(SERVER_PORT);
 
         Socket socket2 = listener.accept();
-        Socket socket3 = listener.accept();
-
         System.out.println("Server 1: connected to " + socket2);
+
+        Socket socket3 = listener.accept();
         System.out.println("Server 1: connected to " + socket3);
 
         Scanner server2Input = new Scanner(socket2.getInputStream());
