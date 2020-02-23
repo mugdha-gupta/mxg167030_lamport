@@ -24,6 +24,8 @@ public class Server3 {
         socket2 = getSocket(FileServer.serverTwoAddress, FileServer.SERVER_PORT+2);
 
         client_listener = new ServerSocket(FileClient.CLIENT_PORT);
+        TimeUnit.SECONDS.sleep(10);
+
         clients = new LinkedList<>();
         for(int i = 0 ; i < 5; i++){
             clients.add(getSocket(client_listener));
