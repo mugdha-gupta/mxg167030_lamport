@@ -43,13 +43,13 @@ public class FileServer {
                 System.err.println("Server number is invalid");
         }
 
-        try (ServerSocket listener = new ServerSocket()) {
-            System.out.println("The capitalization server is running...");
-            ExecutorService pool = Executors.newFixedThreadPool(NUM_CLIENTS);
-            while (true) {
-                pool.execute(new FileAppenderThread(listener.accept()));
-            }
-        }
+//        try (ServerSocket listener = new ServerSocket()) {
+//            System.out.println("The capitalization server is running...");
+//            ExecutorService pool = Executors.newFixedThreadPool(NUM_CLIENTS);
+//            while (true) {
+//                pool.execute(new FileAppenderThread(listener.accept()));
+//            }
+//        }
     }
 
     private static void runServer1() throws Exception {
@@ -145,7 +145,7 @@ public class FileServer {
         socket2.bind(socket2Inet);
 
         InetSocketAddress socket2RemoteInet = new InetSocketAddress(serverTwoAddress, SERVER_PORT);
-        socket1.connect(socket2RemoteInet);
+        socket2.connect(socket2RemoteInet);
 
         Scanner server2Input = new Scanner(socket2.getInputStream());
         PrintWriter server2Output = new PrintWriter(socket2.getOutputStream(), true);
