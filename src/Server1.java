@@ -42,10 +42,10 @@ public class Server1{
         client_listener = new ServerSocket(FileClient.CLIENT_PORT);
         TimeUnit.SECONDS.sleep(10);
 
-        clients = new LinkedList<>();
-        for(int i = 0 ; i < 5; i++){
-            clients.add(getSocket(client_listener));
-        }
+//        clients = new LinkedList<>();
+//        for(int i = 0 ; i < 5; i++){
+//            clients.add(getSocket(client_listener));
+//        }
 
 
         ExecutorService pool = Executors.newFixedThreadPool(10);

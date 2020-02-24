@@ -32,6 +32,7 @@ public class LamportFile {
     void receiveEvent(ServerMessage message) throws IOException {
         incrementClock(message);
         setLastReceived(message);
+        System.out.println("S" + serverId + " received message in lamportfile.java");
 
         switch (message.messageType){
             case ServerMessage.REQUEST_TYPE:
@@ -71,6 +72,8 @@ public class LamportFile {
     private void releaseEvent() throws IOException {
         incrementClock();
         ServerMessage toSend = new ServerMessage(ServerMessage.RELEASE_TYPE, serverId, lamportClock, fileNum);
+        System.out.println("S" + serverId + " about to send release request to all");
+
         sendToAll(toSend);
     }
 
@@ -90,6 +93,8 @@ public class LamportFile {
              ) {
             if(queuedMessage.senderId == message.senderId &&
                 queuedMessage.fileNum == message.fileNum){
+                System.out.println("S" + serverId + " removing request from queue on release");
+
                 serverMessages.remove(queuedMessage);
                 break;
             }
@@ -109,6 +114,8 @@ public class LamportFile {
         incrementClock();
         ServerMessage message = new ServerMessage(ServerMessage.REPLY_TYPE, serverId, lamportClock, fileNum);
         ServerConnection socket = serverConnections.get(senderId);
+        System.out.println("S" + serverId + " sending reply to " + senderId);
+
         socket.sendMessage(message);
     }
 
@@ -116,10 +123,13 @@ public class LamportFile {
         incrementClock();
         ServerMessage message = new ServerMessage(ServerMessage.REQUEST_TYPE, serverId, lamportClock, fileNum);
         serverMessages.add(message);
+        System.out.println("S" + serverId + " added request to queue");
         sendToAll(message);
     }
 
     private void sendToAll(ServerMessage message) throws IOException {
+        System.out.println("S" + serverId + " sending " + message.messageType +" message to all");
+
         for (ServerConnection socket: serverConnections.values()
              ) {
             socket.sendMessage(message);
@@ -127,10 +137,14 @@ public class LamportFile {
     }
 
     private void incrementClock() {
+        System.out.println("S" + serverId + " incrementing clock");
+
         lamportClock++;
     }
 
     private void incrementClock(ServerMessage message){
+        System.out.println("S" + serverId + " incrementing clock");
+
         lamportClock = Math.max(lamportClock+1, message.timeStamp+1);
     }
 
