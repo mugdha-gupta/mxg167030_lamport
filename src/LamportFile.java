@@ -16,6 +16,7 @@ public class LamportFile {
         this.serverId = serverId;
         this.fileNum = 0;
         this.serverConnections = serverConnections;
+        serverMessages = new PriorityQueue<>();
         lastReceivedTimeFromConnections = new HashMap<>();
         for (Integer id: serverConnections.keySet()
              ) {
