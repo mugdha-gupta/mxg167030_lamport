@@ -1,4 +1,4 @@
-public class ServerMessage {
+public class ServerMessage implements Comparable<ServerMessage>{
     int messageType;
     int senderId;
     int timeStamp;
@@ -14,5 +14,21 @@ public class ServerMessage {
         this.senderId = senderId;
         this.timeStamp = timeStamp;
         this.fileNum = fileNum;
+    }
+
+    @Override
+    public int compareTo(ServerMessage o) {
+        if(this.timeStamp < o.timeStamp)
+            return -1;
+        else if (this.timeStamp > o.timeStamp)
+            return 1;
+        else{
+            if(this.senderId < o.senderId)
+                return -1;
+            else if(this.senderId > o.senderId)
+                return 1;
+            else
+                return 0;
+        }
     }
 }

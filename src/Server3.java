@@ -4,24 +4,32 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class Server3 {
-    static ServerSocket client_listener;
-    static Socket socket1;
-    static Socket socket2;
-    static int server_id = 3;
-    static int currentTime;
+    ServerSocket client_listener;
+    Socket socket1;
+    Socket socket2;
+    int server_id = 3;
+    List<Socket> clients;
+    LamportFile lamportFile;
 
-    static List<Socket> clients;
+    Server3() throws Exception {
+        initializeServer3();
+        closeServer();
+    }
 
-    public static void initializeServer3() throws Exception{
+    public void initializeServer3() throws Exception{
         System.out.println("Server 3: I have started!");
         socket1 = getSocket(FileServer.serverOneAddress, FileServer.SERVER_PORT+1);
         socket2 = getSocket(FileServer.serverTwoAddress, FileServer.SERVER_PORT+2);
+        HashMap<Integer, ServerConnection> serverConnections = new HashMap<>();
+        serverConnections.put(1, new ServerConnection(socket1));
+        serverConnections.put(3, new ServerConnection(socket2));
+        lamportFile = new LamportFile(1, server_id, serverConnections);
 
         client_listener = new ServerSocket(FileClient.CLIENT_PORT);
         TimeUnit.SECONDS.sleep(10);
@@ -30,11 +38,17 @@ public class Server3 {
         for(int i = 0 ; i < 5; i++){
             clients.add(getSocket(client_listener));
         }
-        currentTime = 0;
+
+        ExecutorService pool = Executors.newFixedThreadPool(10);
+        pool.execute(new ServerListenerRunnable(server_id, socket1, lamportFile));
+        pool.execute(new ServerListenerRunnable(server_id, socket2, lamportFile));
+
+        TimeUnit.SECONDS.sleep(10);
+        lamportFile.append("str");
 
     }
 
-    static Socket getSocket(String serverAddress, int localPort) throws IOException {
+    Socket getSocket(String serverAddress, int localPort) throws IOException {
 
         Socket socket = new Socket();
         socket.setReuseAddress(true);
@@ -50,17 +64,18 @@ public class Server3 {
         System.out.println("Server 3: " + server1Input.nextLine());
         return socket;
     }
-    static Socket getSocket(ServerSocket listener) throws IOException {
+
+    Socket getSocket(ServerSocket listener) throws IOException {
         Socket socket = listener.accept();
-        System.out.println("Server 2: connected to " + socket);
+        System.out.println("Server 3: connected to " + socket);
         Scanner server3Input = new Scanner(socket.getInputStream());
         PrintWriter server3Output = new PrintWriter(socket.getOutputStream(), true);
-        server3Output.println("Server 2 is running and connected");
-        System.out.println("Server 2: " + server3Input.nextLine());
+        server3Output.println("Server 3 is running and connected");
+        System.out.println("Server 3: " + server3Input.nextLine());
         return socket;
     }
 
-    static void closeServer() throws IOException {
+    void closeServer() throws IOException {
         for (Socket socket: clients
         ) {
             socket.close();
