@@ -28,7 +28,7 @@ public class Server3 {
         socket2 = getSocket(FileServer.serverTwoAddress, FileServer.SERVER_PORT+2);
         HashMap<Integer, ServerConnection> serverConnections = new HashMap<>();
         serverConnections.put(1, new ServerConnection(socket1));
-        serverConnections.put(3, new ServerConnection(socket2));
+        serverConnections.put(2, new ServerConnection(socket2));
         lamportFile = new LamportFile(1, server_id, serverConnections);
 
         client_listener = new ServerSocket(FileClient.CLIENT_PORT);
@@ -45,6 +45,7 @@ public class Server3 {
 
         TimeUnit.SECONDS.sleep(10);
         lamportFile.append("str");
+        pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.NANOSECONDS);
 
     }
 

@@ -46,6 +46,7 @@ public class Server2 {
 
         TimeUnit.SECONDS.sleep(5);
         lamportFile.append("stirng");
+        pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
      Socket getSocket(String serverAddress, int localPort) throws IOException {

@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,6 +57,7 @@ public class Server1{
              ) {
 //            pool.execute(new ClientRunnable(server_id, socket));
         }
+        pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 
     Socket getSocket(ServerSocket listener) throws InterruptedException, IOException {
