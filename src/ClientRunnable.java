@@ -16,7 +16,7 @@ public class ClientRunnable implements Runnable {
         for(int i = 0; i < 100 ; i++){
             double waitTime = Math.random();
             try {
-                TimeUnit.MILLISECONDS.wait((int) (waitTime*1000));
+                Thread.sleep((int)waitTime*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
