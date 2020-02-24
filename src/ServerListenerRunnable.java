@@ -31,9 +31,7 @@ public class ServerListenerRunnable implements Runnable{
                 if(message == null)
                     continue;
                 ServerMessage finalMessage = message;
-                pool.execute(new Runnable() {
-                    @Override
-                    public void run() {
+
                         synchronized (lamportFile){
                             try {
                                 lamportFile.receiveEvent(finalMessage);
@@ -41,8 +39,6 @@ public class ServerListenerRunnable implements Runnable{
                                 e.printStackTrace();
                             }
                         }
-                    }
-                });
             }
 
         } catch (IOException | ClassNotFoundException e) {
