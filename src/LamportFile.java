@@ -50,6 +50,8 @@ public class LamportFile {
 
     private void checkQueue() throws IOException {
         ServerMessage message = serverMessages.peek();
+        if(message == null)
+            return;
         if(message.senderId != serverId)
             return;
         for (Integer time: lastReceivedTimeFromConnections.values()
@@ -76,6 +78,10 @@ public class LamportFile {
 
     private void processRelease(ServerMessage message) {
         ServerMessage queueMessage = serverMessages.peek();
+        if(queueMessage == null){
+            System.err.println("couldn't release message from queue");
+            return;
+        }
         for (ServerMessage queuedMessage: serverMessages
              ) {
             if(queuedMessage.senderId == message.senderId &&
