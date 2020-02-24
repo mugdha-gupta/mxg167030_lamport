@@ -47,6 +47,7 @@ public class ServerListenerRunnable implements Runnable{
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            return;
         }
 
 
