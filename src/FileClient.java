@@ -33,17 +33,7 @@ public class FileClient {
 
         clientNum = Integer.parseInt(args[0]);
 
-        for(int i = 0; i < 100 ; i++){
-            double waitTime = Math.random();
-            TimeUnit.MILLISECONDS.wait((int) (waitTime*1000));
-            int messageNum = i+1;
-            int serverNum = (int)(Math.random()*3) + 1;
-            String message = "client " + clientNum + " message #" + messageNum + " -- server" + serverNum;
-//            int fileNum = (int)(Math.random()*3) + 1;
-            int fileNum = 1;
-
-            servers.get(serverNum).sendMessage(new ClientServerMessage(clientNum, serverNum, message, i+1, fileNum));
-        }
+        pool.execute(new ClientRunnable(clientNum, servers));
 
 
     }
