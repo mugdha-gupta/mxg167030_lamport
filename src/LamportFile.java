@@ -49,6 +49,8 @@ public class LamportFile {
     }
 
     private void checkQueue() throws IOException {
+        if(serverMessages.isEmpty())
+            return;
         ServerMessage message = serverMessages.peek();
         if(message == null)
             return;
@@ -77,6 +79,8 @@ public class LamportFile {
     }
 
     private void processRelease(ServerMessage message) {
+        if(serverMessages.isEmpty())
+            return;
         ServerMessage queueMessage = serverMessages.peek();
         if(queueMessage == null){
             System.err.println("couldn't release message from queue");
