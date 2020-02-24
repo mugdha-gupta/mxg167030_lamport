@@ -27,9 +27,6 @@ public class FileClient {
 
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
-        pool.execute(new ServerClientListener(clientNum, server1));
-        pool.execute(new ServerClientListener(clientNum, server2));
-        pool.execute(new ServerClientListener(clientNum, server3));
 
         clientNum = Integer.parseInt(args[0]);
 
