@@ -1,4 +1,6 @@
-public class ServerMessage implements Comparable<ServerMessage>{
+import java.io.Serializable;
+
+public class ServerMessage implements Comparable<ServerMessage>, Serializable {
     int messageType;
     int senderId;
     int timeStamp;
