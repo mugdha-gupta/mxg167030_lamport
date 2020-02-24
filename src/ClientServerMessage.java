@@ -1,4 +1,6 @@
-public class ClientServerMessage {
+import java.io.Serializable;
+
+public class ClientServerMessage implements Serializable {
     public static final int APPEND_TYPE = 0;
     public static final int ACK = 1;
     public static final int Fail = 2;
