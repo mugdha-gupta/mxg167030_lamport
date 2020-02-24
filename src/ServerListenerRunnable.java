@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 public class ServerListenerRunnable implements Runnable{
     int server_id;
     Socket socket;
-    ObjectOutputStream out;
     ObjectInputStream in;
     LamportFile lamportFile;
 
@@ -24,14 +23,16 @@ public class ServerListenerRunnable implements Runnable{
         try {
             in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
             ServerMessage message;
-            ExecutorService pool = Executors.newFixedThreadPool(10);
 
             while(true){
                 message = (ServerMessage) in.readObject();
                 if(message == null)
                     continue;
+                if(message.messageType == ServerMessage.END_TYPE){
+                    in.close();
+                    break;
+                }
                 ServerMessage finalMessage = message;
-
                         synchronized (lamportFile){
                             try {
                                 lamportFile.receiveEvent(finalMessage);
@@ -39,6 +40,7 @@ public class ServerListenerRunnable implements Runnable{
                                 e.printStackTrace();
                             }
                         }
+
             }
 
         } catch (IOException | ClassNotFoundException e) {

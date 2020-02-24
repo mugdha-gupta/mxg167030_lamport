@@ -1,4 +1,8 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
@@ -6,16 +10,27 @@ public class LamportFile {
     int serverId;
     int lamportClock;
     int fileNum;
+    String filename;
+    String filepath;
+    FileWriter fr;
     static PriorityQueue<ServerMessage> serverMessages;
     HashMap<Integer, ServerConnection> serverConnections;
+    HashMap<Integer, ServerConnection> clientConnections;
     HashMap<Integer, Integer> lastReceivedTimeFromConnections;
 
-    LamportFile(int fileNum, int serverId, HashMap<Integer, ServerConnection> serverConnections){
+    LamportFile(int fileNum, int serverId, HashMap<Integer, ServerConnection> serverConnections, HashMap<Integer, ServerConnection> clientConnections) throws IOException {
         lamportClock = 0;
         this.fileNum = fileNum;
+        filename = "f" + fileNum + ".txt";
         this.serverId = serverId;
         this.fileNum = 0;
+        this.clientConnections = clientConnections;
         this.serverConnections = serverConnections;
+        filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + serverId + "/" + filename;
+        File file = new File(filepath);
+        file.delete();
+        file.createNewFile();
+        fr = new FileWriter(file, true);
         serverMessages = new PriorityQueue<>();
         lastReceivedTimeFromConnections = new HashMap<>();
         for (Integer id: serverConnections.keySet()
@@ -24,9 +39,19 @@ public class LamportFile {
         }
     }
 
-    void append(String s) throws IOException {
+    void append(String s, int clientNum) throws IOException {
         //TODO: implement
-        requestResourceEvent();
+        requestResourceEvent(s, clientNum);
+    }
+
+    private void end() throws IOException {
+        ServerMessage message = new ServerMessage(ServerMessage.END_TYPE, serverId, lamportClock, fileNum, null, 0);
+        sendToAll(message);
+        for (ServerConnection serverConnection: serverConnections.values()
+             ) {
+            serverConnection.out.close();
+        }
+        fr.close();
     }
 
     void receiveEvent(ServerMessage message) throws IOException {
@@ -43,6 +68,9 @@ public class LamportFile {
                 break;
             case ServerMessage.RELEASE_TYPE:
                 processRelease(message);
+                break;
+            case ServerMessage.END_TYPE:
+                end();
                 break;
         }
 
@@ -62,26 +90,34 @@ public class LamportFile {
             if(message.timeStamp >= time)
                 return;
         }
-        //TODO: write to a file
-        serverMessages.remove(message);
+
         System.out.println("server " +  serverId + " entered the Critical Section");
-        releaseEvent();
+
+        fr.write(message.message);
+        serverMessages.remove(message);
+        releaseEvent(message.clientNum);
         checkQueue();
     }
 
-    private void releaseEvent() throws IOException {
-        incrementClock();
-        ServerMessage toSend = new ServerMessage(ServerMessage.RELEASE_TYPE, serverId, lamportClock, fileNum);
-        System.out.println("S" + serverId + " about to send release request to all");
 
+    private void releaseEvent(int clientNum) throws IOException {
+        incrementClock();
+        ServerMessage toSend = new ServerMessage(ServerMessage.RELEASE_TYPE, serverId, lamportClock, fileNum, null, clientNum);
+        System.out.println("S" + serverId + " about to send release request to all");
+        sendAck(clientNum);
         sendToAll(toSend);
+    }
+
+    private void sendAck(int clientNum) throws IOException {
+        ServerConnection conn = clientConnections.get(clientNum);
+        conn.sendMessage(new ClientServerMessage(ClientServerMessage.ACK, serverId, null, 0, fileNum));
     }
 
     private void setLastReceived(ServerMessage message) {
         lastReceivedTimeFromConnections.put(message.senderId, message.timeStamp);
     }
 
-    private void processRelease(ServerMessage message) {
+    private void processRelease(ServerMessage message) throws IOException {
         if(serverMessages.isEmpty())
             return;
         ServerMessage queueMessage = serverMessages.peek();
@@ -94,7 +130,7 @@ public class LamportFile {
             if(queuedMessage.senderId == message.senderId &&
                 queuedMessage.fileNum == message.fileNum){
                 System.out.println("S" + serverId + " removing request from queue on release");
-
+                fr.write(message.message);
                 serverMessages.remove(queuedMessage);
                 break;
             }
@@ -107,21 +143,21 @@ public class LamportFile {
 
     private void receiveRequest(ServerMessage message) throws IOException {
         serverMessages.add(message);
-        sendReplyEvent(message.senderId);
+        sendReplyEvent(message);
     }
 
-    private void sendReplyEvent(int senderId) throws IOException {
+    private void sendReplyEvent(ServerMessage message) throws IOException {
         incrementClock();
-        ServerMessage message = new ServerMessage(ServerMessage.REPLY_TYPE, serverId, lamportClock, fileNum);
-        ServerConnection socket = serverConnections.get(senderId);
-        System.out.println("S" + serverId + " sending reply to " + senderId);
+        ServerMessage toSend = new ServerMessage(ServerMessage.REPLY_TYPE, serverId, lamportClock, fileNum, null, message.clientNum);
+        ServerConnection socket = serverConnections.get(message.senderId);
+        System.out.println("S" + serverId + " sending reply to " + message.senderId);
 
-        socket.sendMessage(message);
+        socket.sendMessage(toSend);
     }
 
-    void requestResourceEvent() throws IOException {
+    void requestResourceEvent(String s, int clientNum) throws IOException {
         incrementClock();
-        ServerMessage message = new ServerMessage(ServerMessage.REQUEST_TYPE, serverId, lamportClock, fileNum);
+        ServerMessage message = new ServerMessage(ServerMessage.REQUEST_TYPE, serverId, lamportClock, fileNum, s, clientNum);
         serverMessages.add(message);
         System.out.println("S" + serverId + " added request to queue");
         sendToAll(message);

@@ -29,23 +29,22 @@ public class Server2 {
         HashMap<Integer, ServerConnection> serverConnections = new HashMap<>();
         serverConnections.put(1, new ServerConnection(socket1));
         serverConnections.put(3, new ServerConnection(socket3));
-
-        lamportFile = new LamportFile(1, server_id, serverConnections);
-
+        HashMap<Integer, ServerConnection> clientConnections = new HashMap<>();
         client_listener = new ServerSocket(FileClient.CLIENT_PORT);
-        TimeUnit.SECONDS.sleep(10);
+        for(int i = 0 ; i < 5; i++){
+            clientConnections.put(i+1, new ServerConnection(getSocket(client_listener)));
+        }
 
-//        clients = new LinkedList<>();
-//        for(int i = 0 ; i < 5; i++){
-//            clients.add(getSocket(client_listener));
-//        }
+        lamportFile = new LamportFile(1, server_id, serverConnections, clientConnections);
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         pool.execute(new ServerListenerRunnable(server_id, socket1, lamportFile));
         pool.execute(new ServerListenerRunnable(server_id, socket3, lamportFile));
 
-        lamportFile.append("stirng");
-        pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.NANOSECONDS);
+        for (ServerConnection connection:clientConnections.values()
+        ) {
+            pool.execute(new ClientListenerRunnable(server_id, connection.socket, lamportFile));
+        }
     }
 
      Socket getSocket(String serverAddress, int localPort) throws IOException {

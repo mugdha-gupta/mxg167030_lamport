@@ -16,5 +16,7 @@ public class ServerConnection {
     void sendMessage(ServerMessage messsage) throws IOException {
         out.writeObject(messsage);
     }
-
+    void sendMessage(ClientServerMessage messsage) throws IOException {
+        out.writeObject(messsage);
+    }
 }
