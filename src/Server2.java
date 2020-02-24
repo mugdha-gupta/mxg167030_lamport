@@ -44,7 +44,6 @@ public class Server2 {
         pool.execute(new ServerListenerRunnable(server_id, socket1, lamportFile));
         pool.execute(new ServerListenerRunnable(server_id, socket3, lamportFile));
 
-        TimeUnit.SECONDS.sleep(5);
         lamportFile.append("stirng");
         pool.awaitTermination(Integer.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
