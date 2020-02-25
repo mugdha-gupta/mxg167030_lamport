@@ -46,7 +46,7 @@ public class MyServerSocket implements Runnable {
         return myServerSocket;
     }
 
-    void sendMessage(Message message) throws IOException {
+    synchronized void sendMessage(Message message) throws IOException {
         out.writeObject(message);
     }
 
