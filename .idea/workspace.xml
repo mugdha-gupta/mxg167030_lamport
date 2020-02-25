@@ -23,6 +23,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/src2" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -31,8 +32,20 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="src2.src" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="src2.src" />
+      <recent name="" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mugdh\gitviews\mxg167030_lamport\src\src2" />
+      <recent name="C:\Users\mugdh\gitviews\mxg167030_lamport\src2" />
+      <recent name="C:\Users\mugdh\gitviews\mxg167030_lamport" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -97,7 +110,7 @@
       <option name="presentableId" value="Default" />
       <updated>1582475028841</updated>
       <workItem from="1582475030574" duration="603000" />
-      <workItem from="1582476237905" duration="44703000" />
+      <workItem from="1582476237905" duration="64939000" />
     </task>
     <servers />
   </component>

@@ -1,187 +1,158 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class LamportFile {
-    int serverId;
-    int lamportClock;
     int fileNum;
-    String filename;
-    String filepath;
+    Server server;
+
     FileWriter fr;
-    static PriorityQueue<ServerMessage> serverMessages;
-    HashMap<Integer, ServerConnection> serverConnections;
-    HashMap<Integer, ServerConnection> clientConnections;
+
+    int lamportClock;
+    static PriorityQueue<Message> requestQueue;
+
     HashMap<Integer, Integer> lastReceivedTimeFromConnections;
 
-    LamportFile(int fileNum, int serverId, HashMap<Integer, ServerConnection> serverConnections, HashMap<Integer, ServerConnection> clientConnections) throws IOException {
-        lamportClock = 0;
+    LamportFile(int fileNum, Server s) throws IOException {
         this.fileNum = fileNum;
-        filename = "f" + fileNum + ".txt";
-        this.serverId = serverId;
-        this.fileNum = 0;
-        this.clientConnections = clientConnections;
-        this.serverConnections = serverConnections;
-        filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + serverId + "/" + filename;
+        server = s;
+        lamportClock = 0;
+        requestQueue = new PriorityQueue<>();
+        lastReceivedTimeFromConnections = new HashMap<>();
+        for (Integer id: server.servers.keySet()) {  lastReceivedTimeFromConnections.put(id, 0);}
+
+        setFileWriter();
+    }
+
+    private void setFileWriter() throws IOException {
+        String filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + server.serverId + "/" + "f" + fileNum + ".txt";
         File file = new File(filepath);
         file.delete();
         file.createNewFile();
         fr = new FileWriter(file, true);
-        serverMessages = new PriorityQueue<>();
-        lastReceivedTimeFromConnections = new HashMap<>();
-        for (Integer id: serverConnections.keySet()
-             ) {
-            lastReceivedTimeFromConnections.put(id, 0);
-        }
     }
 
-    void append(String s, int clientNum) throws IOException {
-        //TODO: implement
-        requestResourceEvent(s, clientNum);
+    synchronized private void incrementClock() {
+        lamportClock++;
     }
 
-    private void end() throws IOException {
-        ServerMessage message = new ServerMessage(ServerMessage.END_TYPE, serverId, lamportClock, fileNum, null, 0);
+    synchronized private void incrementClock(Message message){
+        incrementClock();
+        lamportClock = Math.max(lamportClock, message.timeStamp+1);
+    }
+
+    synchronized void requestResourceEvent(Message message) throws IOException {
+        incrementClock();
+        message.timeStamp = lamportClock;
+        requestQueue.add(message);
         sendToAll(message);
-        for (ServerConnection serverConnection: serverConnections.values()
-             ) {
-            serverConnection.out.close();
-        }
-        fr.close();
+        checkToEnterCS();
     }
 
-    void receiveEvent(ServerMessage message) throws IOException {
+    synchronized private void sendToAll(Message message) throws IOException {
+        for (MyServerSocket serverSocket : server.servers.values()) {
+            serverSocket.sendMessage(message);
+        }
+    }
+
+    synchronized private void sendToServer(Message message, int serverId) throws IOException {
+        server.servers.get(serverId).sendMessage(message);
+    }
+
+    synchronized void receiveMessageEvent(Message message) throws IOException {
         incrementClock(message);
         setLastReceived(message);
-        System.out.println("S" + serverId + " received message in lamportfile.java");
+        System.out.println("S" + server.serverId + " received message in lamportfile.java");
 
         switch (message.messageType){
-            case ServerMessage.REQUEST_TYPE:
-                receiveRequest(message);
+            case Message.REQUEST:
+                requestQueue.add(message);
+                Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, message.serverId, message.messageNum);
+                reply.timeStamp = lamportClock;
+                sendToServer(reply, message.serverId);
                 break;
-            case ServerMessage.REPLY_TYPE:
-                processReply(message);
-                break;
-            case ServerMessage.RELEASE_TYPE:
+            case Message.RELEASE:
                 processRelease(message);
                 break;
-            case ServerMessage.END_TYPE:
-                end();
-                break;
         }
 
-        checkQueue();
+        checkToEnterCS();
     }
 
-    private void checkQueue() throws IOException {
-        if(serverMessages.isEmpty())
+    synchronized private void processRelease(Message message) throws IOException {
+        if(requestQueue.isEmpty())
             return;
-        ServerMessage message = serverMessages.peek();
-        if(message == null)
-            return;
-        if(message.senderId != serverId)
-            return;
-        for (Integer time: lastReceivedTimeFromConnections.values()
-             ) {
-            if(message.timeStamp >= time)
-                return;
-        }
-
-        System.out.println("server " +  serverId + " entered the Critical Section");
-
-        fr.write(message.message);
-        serverMessages.remove(message);
-        releaseEvent(message.clientNum);
-        checkQueue();
-    }
-
-
-    private void releaseEvent(int clientNum) throws IOException {
-        incrementClock();
-        ServerMessage toSend = new ServerMessage(ServerMessage.RELEASE_TYPE, serverId, lamportClock, fileNum, null, clientNum);
-        System.out.println("S" + serverId + " about to send release request to all");
-        sendAck(clientNum);
-        sendToAll(toSend);
-    }
-
-    private void sendAck(int clientNum) throws IOException {
-        ServerConnection conn = clientConnections.get(clientNum);
-        conn.sendMessage(new ClientServerMessage(ClientServerMessage.ACK, serverId, null, 0, fileNum));
-    }
-
-    private void setLastReceived(ServerMessage message) {
-        lastReceivedTimeFromConnections.put(message.senderId, message.timeStamp);
-    }
-
-    private void processRelease(ServerMessage message) throws IOException {
-        if(serverMessages.isEmpty())
-            return;
-        ServerMessage queueMessage = serverMessages.peek();
+        Message queueMessage = requestQueue.peek();
         if(queueMessage == null){
             System.err.println("couldn't release message from queue");
             return;
         }
-        for (ServerMessage queuedMessage: serverMessages
-             ) {
-            if(queuedMessage.senderId == message.senderId &&
-                queuedMessage.fileNum == message.fileNum){
-                System.out.println("S" + serverId + " removing request from queue on release");
+        for (Message queuedMessage: requestQueue) {
+            if(queuedMessage.serverId == message.serverId){
+                System.out.println("S" + server.serverId + " removing request from queue on release");
                 fr.write(message.message);
-                serverMessages.remove(queuedMessage);
+                requestQueue.remove(queuedMessage);
                 break;
             }
         }
     }
 
-    private void processReply(ServerMessage message) {
-
+    synchronized private void setLastReceived(Message message) throws IOException {
+        lastReceivedTimeFromConnections.put(message.serverId, message.timeStamp);
+        checkToEnterCS();
     }
 
-    private void receiveRequest(ServerMessage message) throws IOException {
-        serverMessages.add(message);
-        sendReplyEvent(message);
+    synchronized private void checkToEnterCS() throws IOException {
+        if(requestQueue.isEmpty())
+            return;
+        Message message = requestQueue.peek();
+        if(message == null)
+            return;
+        if(message.serverId != server.serverId)
+            return;
+        for (Integer time: lastReceivedTimeFromConnections.values()) {
+            if(message.timeStamp >= time)
+                return;
+        }
+        enterCSEvent(message);
     }
 
-    private void sendReplyEvent(ServerMessage message) throws IOException {
+    synchronized private void enterCSEvent(Message message) throws IOException {
         incrementClock();
-        ServerMessage toSend = new ServerMessage(ServerMessage.REPLY_TYPE, serverId, lamportClock, fileNum, null, message.clientNum);
-        ServerConnection socket = serverConnections.get(message.senderId);
-        System.out.println("S" + serverId + " sending reply to " + message.senderId);
 
-        socket.sendMessage(toSend);
+        System.out.println("server " +  server.serverId + " entered the Critical Section");
+        fr.write(message.message);
+        synchronizeOtherServers(message);
     }
 
-    void requestResourceEvent(String s, int clientNum) throws IOException {
-        incrementClock();
-        ServerMessage message = new ServerMessage(ServerMessage.REQUEST_TYPE, serverId, lamportClock, fileNum, s, clientNum);
-        serverMessages.add(message);
-        System.out.println("S" + serverId + " added request to queue");
-        sendToAll(message);
-    }
-
-    private void sendToAll(ServerMessage message) throws IOException {
-        System.out.println("S" + serverId + " sending " + message.messageType +" message to all");
-
-        for (ServerConnection socket: serverConnections.values()
+    synchronized private void synchronizeOtherServers(Message message) throws IOException {
+        Message m = new Message(Message.SERVER_APPEND, fileNum, message.clientId, message.serverId, message.messageNum );
+        for (MyServerSocket socket: server.servers.values()
              ) {
-            socket.sendMessage(message);
+            socket.sendMessage(m);
         }
     }
 
-    private void incrementClock() {
-        System.out.println("S" + serverId + " incrementing clock");
+    synchronized public void writeToFile(Message message) throws IOException {
+        fr.write(message.message);
 
-        lamportClock++;
+        message.messageType = Message.ACK;
+        server.servers.get(message.serverId).sendMessage(message);
     }
 
-    private void incrementClock(ServerMessage message){
-        System.out.println("S" + serverId + " incrementing clock");
+    synchronized public void releaseResourceEvent(Message message) throws IOException {
+        incrementClock();
 
-        lamportClock = Math.max(lamportClock+1, message.timeStamp+1);
+        requestQueue.remove(message);
+
+        message.messageType = Message.RELEASE;
+        message.timeStamp = lamportClock;
+
+        System.out.println("S" + server.serverId + " about to send release request to all");
+        sendToAll(message);
+
+        checkToEnterCS();
     }
-
 }
