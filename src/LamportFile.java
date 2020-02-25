@@ -121,6 +121,7 @@ public class LamportFile {
 
         System.out.println(message.logString() + " setting lastReceived");
         lastReceivedTimeFromConnections.put(message.serverId, message.timeStamp);
+        System.out.println(lastReceivedTimeFromConnections.toString());
         checkToEnterCS();
     }
 
