@@ -20,6 +20,7 @@ public class Util {
         System.out.println("bound address");
 
         InetSocketAddress remoteInsa = new InetSocketAddress(serverAdresses[serverId], remotePort);
+        System.out.println("created remote insa for address " +  serverAdresses[serverId]);
         socket.connect(remoteInsa);
         return socket;
     }
@@ -27,7 +28,7 @@ public class Util {
     //returns a socket for the server
     static Socket getSocketAsServer(int remotePort) throws IOException {
         ServerSocket listener = new ServerSocket(remotePort);
-        System.out.println("created listener");
+        System.out.println("created listener on port" + remotePort);
         Socket socket = listener.accept();
         return socket;
     }
