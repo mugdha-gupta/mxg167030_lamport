@@ -18,6 +18,7 @@ public class FileClient {
         client = this;
         clientId = id;
         setUpSocketsMap();
+        Thread.sleep(5000);
         startMessageGenerationLoop();
 
     }
