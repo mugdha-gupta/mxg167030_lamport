@@ -61,7 +61,7 @@ public class Message implements Comparable, Serializable {
     }
 
     public String logString(){
-        return "Message " +  messageNum + " to file " + fileNum + " from client " + clientId + " : ";
+        return "Message " +  messageNum + " to file " + fileNum + " from client " + clientId + "to +" + serverId + " : ";
     }
 
 }
