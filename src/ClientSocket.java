@@ -47,7 +47,6 @@ public class ClientSocket {
                 return m;
 
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
                 continue;
             }
         }
