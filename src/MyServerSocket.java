@@ -66,6 +66,7 @@ public class MyServerSocket implements Runnable {
 
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+                continue;
             }
         }
     }

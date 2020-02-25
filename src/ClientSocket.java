@@ -34,14 +34,20 @@ public class ClientSocket {
         return m;
     }
 
-    Message getMessage() throws IOException, ClassNotFoundException {
+    Message getMessage() {
         while (true){
-            if (!(in.available() <= 0))
+            try {
+                if (!(in.available() <= 0))
+                    continue;
+                Message m = (Message) in.readObject();
+                if(m == null)
+                    continue;
+                return m;
+
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
                 continue;
-            Message m = (Message) in.readObject();
-            if(m == null)
-                continue;
-            return m;
+            }
         }
     }
 
