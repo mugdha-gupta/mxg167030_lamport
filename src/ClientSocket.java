@@ -37,11 +37,11 @@ public class ClientSocket {
     }
 
     Message getMessage() {
-        while (true){
+        while (true){Message m;
             try {
                 if (!(in.available() <= 0))
                     continue;
-                Message m = (Message) in.readObject();
+                m = (Message) in.readObject();
                 if(m == null)
                     continue;
                 return m;

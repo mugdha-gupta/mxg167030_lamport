@@ -54,12 +54,12 @@ public class MyServerSocket implements Runnable {
     public void run() {
 
         ExecutorService pool = Executors.newFixedThreadPool(20);
-
+        Message m;
         while(true){
             try {
                 if (!(in.available() <= 0))
                     continue;
-                Message m = (Message) in.readObject();
+                m = (Message) in.readObject();
                 if(m == null)
                     continue;
                 pool.execute(new HandleMessageRunnable(m, localServer));
