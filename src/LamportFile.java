@@ -51,10 +51,12 @@ public class LamportFile {
         message.timeStamp = lamportClock;
         requestQueue.add(message);
         sendToAll(message);
+        System.out.println("resource requested");
         checkToEnterCS();
     }
 
     synchronized private void sendToAll(Message message) throws IOException {
+        System.out.println("sending request");
         for (MyServerSocket serverSocket : server.servers.values()) {
             serverSocket.sendMessage(message);
         }
@@ -71,12 +73,14 @@ public class LamportFile {
 
         switch (message.messageType){
             case Message.REQUEST:
+                System.out.println("received request emssage");
                 requestQueue.add(message);
                 Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, message.serverId, message.messageNum);
                 reply.timeStamp = lamportClock;
                 sendToServer(reply, message.serverId);
                 break;
             case Message.RELEASE:
+                System.out.println("received Release message");
                 processRelease(message);
                 break;
         }

@@ -47,6 +47,7 @@ public class MyServerSocket implements Runnable {
     }
 
     synchronized void sendMessage(Message message) throws IOException {
+        System.out.println("Socket is onw sending message");
         out.writeObject(message);
     }
 

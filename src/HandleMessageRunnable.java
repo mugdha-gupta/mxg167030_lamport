@@ -52,6 +52,7 @@ public class HandleMessageRunnable implements Runnable {
             case Message.REPLY:
                 //must be coming from another server
                 //need to send to a lamport
+                System.out.println("received a message from a client");
                 try {
                     file.receiveMessageEvent(message);
                 } catch (IOException e) {
