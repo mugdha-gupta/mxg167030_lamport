@@ -31,6 +31,7 @@ public class Util {
         ServerSocket listener = new ServerSocket(remotePort);
         System.out.println("created listener on port" + remotePort);
         Socket socket = listener.accept();
+        listener.close();
         return socket;
     }
 
