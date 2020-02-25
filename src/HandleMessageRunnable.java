@@ -30,18 +30,20 @@ public class HandleMessageRunnable implements Runnable {
                 System.out.println(message.logString() + " is an ack, in the runnable");
 
                 if(server.ackMessages.contains(message.fileNum)){
+                    System.out.println(message.logString() + " 2nd ack, success");
                     message.success = true;
                 }
                 else
                     server.ackMessages.add(message.fileNum);
                 if(message.success){
+                    server.ackMessages.remove(message.fileNum);
+
                     try {
-                        server.clients.get(message.clientId).sendMessage(
-                                new Message(Message.ACK, message.fileNum, message.clientId, message.serverId, message.messageNum));
+                        server.clients.get(message.clientId).sendMessage(message);
+                        System.out.println(" sent message to client");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    server.ackMessages.remove(message.fileNum);
                     try {
                         file.releaseResourceEvent(message);
                     } catch (IOException e) {

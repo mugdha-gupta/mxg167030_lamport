@@ -160,10 +160,10 @@ public class LamportFile {
     synchronized private void synchronizeOtherServers(Message message) throws IOException {
 
         System.out.println(message.logString() + " sync other servers");
-        Message m = new Message(Message.SERVER_APPEND, fileNum, message.clientId, server.serverId, message.messageNum );
+        message.messageType = Message.SERVER_APPEND;
         for (MyServerSocket socket: server.servers.values()
              ) {
-            socket.sendMessage(m);
+            socket.sendMessage(message);
         }
     }
 
@@ -177,6 +177,8 @@ public class LamportFile {
     }
 
     synchronized public void releaseResourceEvent(Message message) throws IOException {
+        System.out.println(message.logString() + " entered release event");
+
         incrementClock();
 
         requestQueue.remove(message);
@@ -185,7 +187,6 @@ public class LamportFile {
         message.timeStamp = lamportClock;
 
 
-        System.out.println(message.logString() + " release being sent to all");
         sendToAll(message);
 
         checkToEnterCS();

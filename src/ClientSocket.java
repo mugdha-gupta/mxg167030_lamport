@@ -23,7 +23,7 @@ public class ClientSocket {
         out.writeObject(message);
         System.out.println(message.logString() + " has left CLientSocket");
         Message m = getMessage();
-        System.out.println("i got the messgae");
+        System.out.println(" CLIENT: i got the messgae");
         switch (m.messageType){
             case Message.ACK:
                 System.out.println(Message.successMessage);
