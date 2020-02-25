@@ -18,12 +18,13 @@ public class FileClient {
         client = this;
         clientId = id;
         setUpSocketsMap();
-        Thread.sleep(5000);
+        Thread.sleep(3000);
         startMessageGenerationLoop();
 
     }
 
     private void startMessageGenerationLoop() throws InterruptedException, IOException, ClassNotFoundException {
+        System.out.println("starting message generation");
         for (int i = 0; i < 100; i++) {
             double waitTime = Math.random();
             Thread.sleep((int) waitTime * 1000);
@@ -33,6 +34,7 @@ public class FileClient {
             int fileNum = (int) (Math.random() *4) + 1;
 
             Message message = new Message(Message.APPEND, fileNum, clientId, serverNum, messageNum);
+            System.out.println("client "+  clientId + " sending message");
             clientSockets.get(serverNum).sendMessage(message);
         }
     }

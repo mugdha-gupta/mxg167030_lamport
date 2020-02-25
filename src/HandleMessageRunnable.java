@@ -19,6 +19,7 @@ public class HandleMessageRunnable implements Runnable {
             case Message.APPEND:
                 //can only be coming from the client to the server
                 //need to send to the correct lamportFile
+                System.out.println("append message arrived!");
                 try {
                     file.requestResourceEvent(message);
                 } catch (IOException e) {

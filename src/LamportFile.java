@@ -33,6 +33,8 @@ public class LamportFile {
         file.delete();
         file.createNewFile();
         fr = new FileWriter(file, true);
+        fr.write("appended to file");
+        System.out.println("created file");
     }
 
     synchronized private void incrementClock() {

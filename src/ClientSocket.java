@@ -19,9 +19,11 @@ public class ClientSocket {
         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
-    Message sendMessage(Message message) throws IOException, ClassNotFoundException {
+    Message sendMessage(Message message) throws IOException{
         out.writeObject(message);
+        System.out.println("i sent the message");
         Message m = getMessage();
+        System.out.println("i got the messgae");
         switch (m.messageType){
             case Message.ACK:
                 System.out.println(Message.successString());
