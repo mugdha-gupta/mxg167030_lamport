@@ -61,11 +61,13 @@ public class MyServerSocket implements Runnable {
                 if (!(in.available() <= 0))
                     continue;
                 m = (Message) in.readObject();
+                System.out.println("a message arrived at the socket");
+                Thread.sleep(1000);
                 if(m == null)
                     continue;
                 pool.execute(new HandleMessageRunnable(m, localServer));
 
-            } catch (IOException | ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 e.printStackTrace();
                 continue;
             }

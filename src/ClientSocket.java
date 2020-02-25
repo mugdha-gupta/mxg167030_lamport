@@ -21,7 +21,7 @@ public class ClientSocket {
 
     Message sendMessage(Message message) throws IOException{
         out.writeObject(message);
-        System.out.println("i sent the message");
+        System.out.println(message.logString() + " has left CLientSocket");
         Message m = getMessage();
         System.out.println("i got the messgae");
         switch (m.messageType){

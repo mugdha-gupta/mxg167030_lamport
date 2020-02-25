@@ -28,7 +28,7 @@ public class Message implements Comparable, Serializable {
         switch (messageType){
             //implement all switch statemests
             case APPEND:
-                message  = "client " + clientId + " message #" + messageNum + " -- server" + serverId;
+                message  = "client " + clientId + " message #" + messageNum + " -- server" + serverId + "\n";
                 break;
             default:
                 break;
@@ -59,4 +59,9 @@ public class Message implements Comparable, Serializable {
                 return 0;
         }
     }
+
+    public String logString(){
+        return "Message " +  messageNum + " to file " + fileNum + " from client " + clientId + " : ";
+    }
+
 }
