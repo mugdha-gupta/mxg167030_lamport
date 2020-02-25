@@ -1,12 +1,9 @@
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Util {
     static String[] serverAdresses = {"dc01.utdallas.edu", "dc02.utdallas.edu", "dc03.utdallas.edu"};
