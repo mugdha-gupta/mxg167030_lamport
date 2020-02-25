@@ -68,7 +68,6 @@ public class MyServerSocket implements Runnable {
                 pool.execute(new HandleMessageRunnable(m, localServer));
 
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
-                e.printStackTrace();
                 continue;
             }
         }
