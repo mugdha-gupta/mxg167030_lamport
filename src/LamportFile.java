@@ -72,9 +72,10 @@ public class LamportFile {
     }
 
     synchronized void receiveMessageEvent(Message message) throws IOException {
+
+        System.out.println(message.logString() + " message has been received in lamportFIle");
         incrementClock(message);
         setLastReceived(message);
-        System.out.println(message.logString() + " message has been received in lamportFIle");
 
         switch (message.messageType){
             case Message.REQUEST:
