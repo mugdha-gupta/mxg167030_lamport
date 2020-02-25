@@ -128,14 +128,19 @@ public class LamportFile {
         System.out.println(" checking to enter the CS");
         if(requestQueue.isEmpty())
             return;
+        System.out.println(" queue not empty");
         Message message = requestQueue.peek();
         if(message == null)
             return;
+        System.out.println(" message at top of queue not null");
         if(message.serverId != server.serverId)
             return;
+        System.out.println(" message at top of queue is my message");
         for (Integer time: lastReceivedTimeFromConnections.values()) {
+            System.out.println(" message time " + message.timeStamp + " lastheard time " + time);
             if(message.timeStamp >= time)
                 return;
+            System.out.println(" 1 time passed");
         }
         enterCSEvent(message);
     }
