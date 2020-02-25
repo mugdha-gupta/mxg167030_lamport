@@ -151,7 +151,8 @@ public class LamportFile {
         incrementClock();
 
 
-        System.out.println(message.logString() + " entering critical section");
+        System.out.println(message.logString() + " ---entering critical section");
+        System.out.println(" trying to write message " + message.message);
         fr.write(message.message);
         synchronizeOtherServers(message);
     }
@@ -159,7 +160,7 @@ public class LamportFile {
     synchronized private void synchronizeOtherServers(Message message) throws IOException {
 
         System.out.println(message.logString() + " sync other servers");
-        Message m = new Message(Message.SERVER_APPEND, fileNum, message.clientId, message.serverId, message.messageNum );
+        Message m = new Message(Message.SERVER_APPEND, fileNum, message.clientId, server.serverId, message.messageNum );
         for (MyServerSocket socket: server.servers.values()
              ) {
             socket.sendMessage(m);
