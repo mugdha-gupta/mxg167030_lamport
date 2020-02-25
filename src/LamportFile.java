@@ -28,6 +28,7 @@ public class LamportFile {
 
     private void setFileWriter() throws IOException {
         String filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + server.serverId + "/" + "f" + fileNum + ".txt";
+        System.out.println("trying to create " + filepath);
         File file = new File(filepath);
         file.delete();
         file.createNewFile();
