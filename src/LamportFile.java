@@ -51,6 +51,7 @@ public class LamportFile {
     synchronized void requestResourceEvent(Message message) throws IOException {
         incrementClock();
         message.timeStamp = lamportClock;
+        message.messageType = Message.REQUEST;
 
         requestQueue.add(message);
         System.out.println(message.logString() + " file is requesting resource, m has been added to the request Queue");
