@@ -81,7 +81,7 @@ public class LamportFile {
             case Message.REQUEST:
                 System.out.println(message.logString() + " it is a request mesage");
                 requestQueue.add(message);
-                Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, message.serverId, message.messageNum);
+                Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, server.serverId, message.messageNum);
                 reply.timeStamp = lamportClock;
                 sendToServer(reply, message.serverId);
 
