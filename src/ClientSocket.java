@@ -26,10 +26,10 @@ public class ClientSocket {
         System.out.println("i got the messgae");
         switch (m.messageType){
             case Message.ACK:
-                System.out.println(Message.successString());
+                System.out.println(Message.successMessage);
                 break;
             default:
-                System.out.println(Message.failString());
+                System.out.println(Message.failMessage);
                 break;
         }
 

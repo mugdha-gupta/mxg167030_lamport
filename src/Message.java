@@ -3,10 +3,12 @@ import java.io.Serializable;
 public class Message implements Comparable, Serializable {
     int messageType;
     int fileNum;
-    static int clientId;
-    static int serverId;
+    int clientId;
+    int serverId;
     int messageNum;
     String message;
+    static String successMessage;
+    static String failMessage;
 
     int timeStamp;
     boolean success = false;
@@ -24,7 +26,8 @@ public class Message implements Comparable, Serializable {
         this.clientId = clientId;
         this.serverId = serverId;
         this.messageNum = messageNum;
-
+        successMessage = "client " + clientId +  " receives a successful ack from server " + serverId;;
+        failMessage = "client " + clientId +  " receives a failure from server " + serverId;;
         switch (messageType){
             //implement all switch statemests
             case APPEND:
@@ -33,14 +36,6 @@ public class Message implements Comparable, Serializable {
             default:
                 break;
         }
-    }
-
-    public static String successString() {
-        return "client " + clientId +  " receives a successful ack from server " + serverId;
-    }
-
-    public static String failString() {
-        return "client " + clientId +  " receives a failure from server " + serverId;
     }
 
     @Override
