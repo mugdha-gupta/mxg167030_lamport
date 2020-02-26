@@ -59,6 +59,7 @@ public class LamportFile {
     }
 
     synchronized void requestResourceEvent(AppendMessage message) throws IOException {
+        System.out.println("An append Request arrived at Server " + server.serverId + "\n");
         incrementClock();
         RequestMessage requestMessage = new RequestMessage(message.getClientId(), server.serverId, fileNum, lamportClock, message.getMessage());
         System.out.println("REQUEST: \n" +
@@ -93,6 +94,7 @@ public class LamportFile {
     }
 
     synchronized void receiveRequestMessage(RequestMessage message) throws IOException {
+        System.out.println("An Receive message arrived at Server " + server.serverId + "\n");
         incrementClock(message.getTimestamp());
         System.out.println("REQUEST: \n" +
                 "\ttime:" + message.getTimestamp() +
@@ -114,6 +116,8 @@ public class LamportFile {
     }
 
     synchronized void receiveReleaseMessage(ReleaseMessage message) throws IOException {
+
+        System.out.println("An release message arrived at Server " + server.serverId + "\n");
 //        System.out.println("received release mess");
         incrementClock(message.getTimestamp());
         setLastReceived(message.getRequestingServer(), message.getTimestamp());
@@ -122,6 +126,8 @@ public class LamportFile {
     }
 
     synchronized void receiveReplyMessage(ReplyMessage message) throws IOException {
+
+        System.out.println("A reply message arrived at Server " + server.serverId + "\n");
 //        System.out.println("received reply mess");
         System.out.println("REPLY: \n" +
                 "\ttime:" + message.getTimestamp() +
