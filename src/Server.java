@@ -51,7 +51,7 @@ public class Server {
 
         clients.put(1, MyServerSocket.createServerClientSocket(server, 1));
         clients.put(2, MyServerSocket.createServerClientSocket(server, 2));
-        clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
+//        clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
 //        clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
 //        clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
 
