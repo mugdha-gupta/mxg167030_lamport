@@ -1,6 +1,8 @@
 package Message;
 
-public class AckMessage {
+import java.io.Serializable;
+
+public class AckMessage implements Serializable {
     int clientId;
     int fileNum;
 

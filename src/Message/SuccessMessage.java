@@ -1,6 +1,8 @@
 package Message;
 
-public class SuccessMessage {
+import java.io.Serializable;
+
+public class SuccessMessage implements Serializable {
     String successMessge;
 
     public SuccessMessage(String successMessge) {

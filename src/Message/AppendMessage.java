@@ -1,6 +1,8 @@
 package Message;
 
-public class AppendMessage{
+import java.io.Serializable;
+
+public class AppendMessage implements Serializable {
     int clientId;
     int fileNum;
     String message;

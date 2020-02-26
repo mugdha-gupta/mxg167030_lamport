@@ -1,6 +1,8 @@
 package Message;
 
-public class RequestMessage {
+import java.io.Serializable;
+
+public class RequestMessage implements Serializable, Comparable {
     int clientId;
     int requestingServer;
     int fileNum;
@@ -33,5 +35,22 @@ public class RequestMessage {
 
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        RequestMessage m = ((RequestMessage) o);
+        if(this.timestamp < m.timestamp)
+            return -1;
+        else if (this.timestamp > m.timestamp)
+            return 1;
+        else{
+            if(this.requestingServer < m.requestingServer)
+                return -1;
+            else if(this.requestingServer > m.requestingServer)
+                return 1;
+            else
+                return 0;
+        }
     }
 }

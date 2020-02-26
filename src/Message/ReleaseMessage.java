@@ -1,6 +1,8 @@
 package Message;
 
-public class ReleaseMessage {
+import java.io.Serializable;
+
+public class ReleaseMessage implements Serializable {
     int clientId;
     int requestingServer;
     int timestamp;

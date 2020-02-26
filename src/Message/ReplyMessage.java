@@ -1,6 +1,8 @@
 package Message;
 
-public class ReplyMessage {
+import java.io.Serializable;
+
+public class ReplyMessage implements Serializable {
     int clientId;
     int sourceServer;
     int timestamp;
