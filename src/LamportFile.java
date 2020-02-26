@@ -42,57 +42,59 @@ public class LamportFile {
 
     synchronized private void incrementClock() {
         lamportClock++;
-        System.out.println("clock incremented to " + lamportClock);
+//        System.out.println("clock incremented to " + lamportClock);
     }
 
     synchronized private void incrementClock(Message message){
         incrementClock();
         lamportClock = Math.max(lamportClock, message.timeStamp+1);
-        System.out.println("clock incremented to " +  lamportClock);
+//        System.out.println("clock incremented to " +  lamportClock);
     }
 
     synchronized void requestResourceEvent(Message message) throws IOException {
         incrementClock();
         message.timeStamp = lamportClock;
         message.messageType = Message.REQUEST;
-
+        System.out.println("2. TS inc. to " +  message.timeStamp + " and type set to Req.");
         requestQueue.add(message);
-        System.out.println(message.logString() + " file is requesting resource, m has been added to the request Queue");
+        System.out.println("\t2a. message added to request queue: " + requestQueue.toString());
+//        System.out.println(message.logString() + " file is requesting resource, m has been added to the request Queue");
         sendToAll(message);
+        System.out.println("\t2b. message sent to all other servers");
         checkToEnterCS();
     }
 
     synchronized private void sendToAll(Message message) throws IOException {
-        System.out.println(message.logString() + " sending the message to all, " + message.messageType);
+//        System.out.println(message.logString() + " sending the message to all, " + message.messageType);
         for (MyServerSocket serverSocket : server.servers.values()) {
             serverSocket.sendMessage(message);
+            System.out.println("3. Message type " + message.messageType + " sent to server " + serverSocket.remoteServerId);
         }
     }
 
     synchronized private void sendToServer(Message message, int serverId) throws IOException {
-        System.out.println(message.logString() + " is being sent to server " + serverId);
+//        System.out.println(message.logString() + " is being sent to server " + serverId);
         server.servers.get(serverId).sendMessage(message);
     }
 
     synchronized void receiveMessageEvent(Message message) throws IOException {
 
-        System.out.println(message.logString() + " message has been received in lamportFIle");
+//        System.out.println(message.logString() + " message has been received in lamportFIle");
         incrementClock(message);
         setLastReceived(message);
 
         switch (message.messageType){
             case Message.REQUEST:
-                System.out.println(message.logString() + " it is a request mesage");
+//                System.out.println(message.logString() + " it is a request mesage");
                 requestQueue.add(message);
                 Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, server.serverId, message.messageNum);
                 reply.timeStamp = lamportClock;
                 sendToServer(reply, message.serverId);
 
-                System.out.println(message.logString() + " message has been added to request queue and sent to server");
+//                System.out.println(message.logString() + " message has been added to request queue and sent to server");
                 break;
             case Message.RELEASE:
 
-                System.out.println(message.logString() + " it is a release message");
                 processRelease(message);
                 break;
         }
@@ -105,15 +107,15 @@ public class LamportFile {
             return;
         Message queueMessage = requestQueue.peek();
         if(queueMessage == null){
-            System.err.println("couldn't release message from queue");
+//            System.err.println("couldn't release message from queue");
             return;
         }
 
-        System.out.println(message.logString() + " message is about to be processesed");
+//        System.out.println(message.logString() + " message is about to be processesed");
         for (Message queuedMessage: requestQueue) {
             if(queuedMessage.serverId == message.serverId){
 
-                System.out.println(message.logString() + " message is being removed from the remote server queue");
+//                System.out.println(message.logString() + " message is being removed from the remote server queue");
                 requestQueue.remove(queuedMessage);
                 break;
             }
@@ -122,7 +124,7 @@ public class LamportFile {
 
     synchronized private void setLastReceived(Message message) throws IOException {
 
-        System.out.println(message.logString() + " setting lastReceived");
+//        System.out.println(message.logString() + " setting lastReceived");
         lastReceivedTimeFromConnections.put(message.serverId, message.timeStamp);
         System.out.println(lastReceivedTimeFromConnections.toString());
         checkToEnterCS();
@@ -130,23 +132,18 @@ public class LamportFile {
 
     synchronized private void checkToEnterCS() throws IOException {
 
-        System.out.println(" checking to enter the CS");
         if(requestQueue.isEmpty() || inCriticalSection == true)
             return;
-        System.out.println(" queue not empty");
         Message message = requestQueue.peek();
         if(message == null)
             return;
-        System.out.println(" message at top of queue not null");
         if(message.serverId != server.serverId)
             return;
-        System.out.println(" message at top of queue is my message");
         for (Integer time: lastReceivedTimeFromConnections.values()) {
-            System.out.println(" message time " + message.timeStamp + " lastheard time " + time);
             if(message.timeStamp >= time)
                 return;
-            System.out.println(" 1 time passed");
         }
+        System.out.println("--check CS passed--");
         enterCSEvent(message);
     }
 
@@ -155,15 +152,15 @@ public class LamportFile {
         incrementClock();
 
 
-        System.out.println(message.logString() + " ---entering critical section");
-        System.out.println(" trying to write message " + message.message);
+//        System.out.println(message.logString() + " ---entering critical section");
+//        System.out.println(" trying to write message " + message.message);
         fr.write(message.message);
         synchronizeOtherServers(message);
     }
 
     synchronized private void synchronizeOtherServers(Message message) throws IOException {
 
-        System.out.println(message.logString() + " sync other servers");
+//        System.out.println(message.logString() + " sync other servers");
         message.messageType = Message.SERVER_APPEND;
         for (MyServerSocket socket: server.servers.values()
              ) {
@@ -181,7 +178,7 @@ public class LamportFile {
     }
 
     synchronized public void releaseResourceEvent(Message message) throws IOException {
-        System.out.println(message.logString() + " entered release event");
+//        System.out.println(message.logString() + " entered release event");
 
         incrementClock();
 
