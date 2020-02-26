@@ -13,6 +13,7 @@ public class ClientSocket {
     ObjectInputStream in;
     ObjectOutputStream out;
     Socket socket;
+    boolean start;
 
     public ClientSocket(FileClient client, int serverId, int localPort) throws IOException {
         this.client = client;
@@ -20,6 +21,27 @@ public class ClientSocket {
         socket = Util.getSocketAsClient(serverId, localPort, Util.CLIENT_LISTENER_PORT);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+        start = false;
+        getStart();
+    }
+
+    private void getStart() {
+        while (!start){
+            Object object;
+            try {
+                if (!(in.available() <= 0))
+                    continue;
+                object = in.readObject();
+                if(object == null)
+                    continue;
+                if(object instanceof Integer){
+                    if ((Integer)object == 5)
+                        start = true;
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                continue;
+            }
+        }
     }
 
     void sendMessage(AppendMessage message) throws IOException{
@@ -48,6 +70,8 @@ public class ClientSocket {
             }
         }
     }
+
+
 
 
 }

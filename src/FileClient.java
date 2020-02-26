@@ -1,6 +1,7 @@
 import Message.AppendMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class FileClient {
@@ -16,7 +17,7 @@ public class FileClient {
 
     }
 
-    public FileClient(int id) throws IOException, InterruptedException, ClassNotFoundException {
+    public FileClient(int id) throws IOException, InterruptedException {
         client = this;
         clientId = id;
         setUpSocketsMap();
@@ -26,7 +27,8 @@ public class FileClient {
 
     }
 
-    private void startMessageGenerationLoop() throws InterruptedException, IOException, ClassNotFoundException {
+    private void startMessageGenerationLoop() throws InterruptedException, IOException{
+        getGoAhead();
         System.out.println("starting message generation");
         for (int i = 0; i < 1; i++) {
             double waitTime = Math.random();
@@ -41,6 +43,11 @@ public class FileClient {
             String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";;
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
             clientSockets.get(serverNum).sendMessage(message);
+        }
+    }
+
+    private void getGoAhead() {
+        while (!(clientSockets.get(1).start && clientSockets.get(2).start && clientSockets.get(3).start)){
         }
     }
 

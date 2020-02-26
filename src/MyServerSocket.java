@@ -72,6 +72,10 @@ public class MyServerSocket implements Runnable {
         out.writeObject(message);
     }
 
+    synchronized void sendMessage(Integer message) throws IOException {
+        out.writeObject(message);
+    }
+
     @Override
     public void run() {
 
