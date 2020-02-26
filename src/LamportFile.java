@@ -117,12 +117,15 @@ public class LamportFile {
         System.out.println("processing release");
         if(requestQueue.isEmpty())
             return;
+        RequestMessage m = new RequestMessage(0,0,0,0,null);
         for (RequestMessage queuedMessage: requestQueue) {
             if(queuedMessage.getRequestingServer() == message.getRequestingServer() && queuedMessage.getClientId() == message.getClientId()){
-                requestQueue.remove(queuedMessage);
-                System.out.println("removed from queue");
+                m = queuedMessage;
             }
         }
+        requestQueue.remove(m);
+        System.out.println("removed from queue");
+
     }
 
     synchronized private void setLastReceived(int serverId, int timeStamp) throws IOException {
