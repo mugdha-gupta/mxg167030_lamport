@@ -22,7 +22,6 @@ public class FileClient {
         clientId = id;
         setUpSocketsMap();
         Thread.sleep(3000);
-        if(clientId == 1)
         startMessageGenerationLoop();
 
     }
@@ -36,8 +35,6 @@ public class FileClient {
             int messageNum = i + 1;
             int serverNum = (int) (Math.random() * 3) + 1;
             int fileNum = (int) (Math.random() *4) + 1;
-            serverNum = 1;
-            fileNum = 1;
 
             String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";;
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
