@@ -37,16 +37,16 @@ public class Server {
         switch (serverId){
             case 1 :
                 servers.put(2, MyServerSocket.createServerListenerSocket(server, 2));
-                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
+//                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
                 break;
             case 2 :
                 servers.put(1, MyServerSocket.createServerSocket(server, 1, Util.SERVER_LISTENER_PORT+1));
-                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
+//                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
                 break;
-            case 3 :
-                servers.put(1, MyServerSocket.createServerSocket(server, 1, Util.SERVER_LISTENER_PORT+1));
-                servers.put(2, MyServerSocket.createServerSocket(server, 2, Util.SERVER_LISTENER_PORT+2));
-                break;
+//            case 3 :
+//                servers.put(1, MyServerSocket.createServerSocket(server, 1, Util.SERVER_LISTENER_PORT+1));
+//                servers.put(2, MyServerSocket.createServerSocket(server, 2, Util.SERVER_LISTENER_PORT+2));
+//                break;
         }
 
         clients.put(1, MyServerSocket.createServerClientSocket(server, 1));
