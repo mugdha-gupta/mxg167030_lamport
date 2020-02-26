@@ -49,10 +49,10 @@ public class Server {
         }
 
         clients.put(1, MyServerSocket.createServerClientSocket(server, 1));
-//        clients.put(2, MyServerSocket.createServerClientSocket(server, 2));
-//        clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
-//        clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
-//        clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
+        clients.put(2, MyServerSocket.createServerClientSocket(server, 2));
+        clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
+        clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
+        clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
 
         files.put(1, new LamportFile(1, server));
         files.put(2, new LamportFile(2, server));
