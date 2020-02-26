@@ -80,13 +80,6 @@ public class MyServerSocket implements Runnable {
 
     @Override
     public void run() {
-        if(clientId != 0){
-            try {
-                sendMessage(new StartMessage());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
 
         ExecutorService pool = Executors.newFixedThreadPool(20);
         Object m;

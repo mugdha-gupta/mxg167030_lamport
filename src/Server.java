@@ -69,7 +69,11 @@ public class Server {
         ) {
             pool.execute(socketRunnable);
         }
-
+        for (MyServerSocket socketRunnable: clients.values()
+        ) {
+            socketRunnable.sendMessage(new StartMessage());
+            System.out.println("sent start");
+        }
 
     }
 

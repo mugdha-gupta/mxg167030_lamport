@@ -62,7 +62,6 @@ public class ClientSocket implements Runnable{
                     latch.countDown();
                     return;
                 }
-                    return;
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
