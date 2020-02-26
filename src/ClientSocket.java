@@ -23,6 +23,7 @@ public class ClientSocket implements Runnable{
         socket = Util.getSocketAsClient(serverId, localPort, Util.CLIENT_LISTENER_PORT);
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+        this.latch = latch;
     }
 
     void sendMessage(AppendMessage message) throws IOException, ClassNotFoundException {
