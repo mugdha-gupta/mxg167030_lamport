@@ -1,4 +1,6 @@
 package Message;
 
-public class StartMessage {
+import java.io.Serializable;
+
+public class StartMessage implements Serializable {
 }
