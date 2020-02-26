@@ -45,7 +45,7 @@ public class FileClient {
             int serverNum = (int) (Math.random() * 3) + 1;
             int fileNum = (int) (Math.random() *2) + 1;
 
-            String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";
+            String messageString = "client " + clientId + " message #" + messageNum + "for file "+ fileNum + "-- server" + serverNum + "\n";
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
             clientSockets.get(serverNum).sendMessage(message);
         }
