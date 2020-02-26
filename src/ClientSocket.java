@@ -55,8 +55,6 @@ public class ClientSocket implements Runnable{
         while (true){
             Object object;
             try {
-                if (in.available() <= 0)
-                    continue;
                 object = in.readObject();
                 if(object == null)
                     continue;
