@@ -1,34 +1,46 @@
+import Message.AppendMessage;
+import Message.RequestMessage;
+
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.channels.AcceptPendingException;
 
 
 public class HandleMessageRunnable implements Runnable {
     Server server;
-    Message message;
+    Object message;
 
-    public HandleMessageRunnable(Message m, Server s) {
+    public HandleMessageRunnable(Object m, Server s) {
         server = s;
         message = m;
     }
 
     @Override
     public void run() {
-        LamportFile file = server.getLamportFile(message.fileNum);
+        LamportFile file;
+
+        if(message instanceof AppendMessage){
+            AppendMessage mess = (AppendMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            System.out.println("1. Server: " + server.serverId + " received an append message");
+            try {
+                file.requestResourceEvent(mess;
+                System.out.println("\t1a. append message has been sent to lamp file");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        else if(message instanceof RequestMessage){
+
+        }
+
+
+
+
 
         switch (message.messageType){
-            //implement all switch statemests
-            case Message.APPEND:
-                //can only be coming from the client to the server
-                //need to send to the correct lamportFile
-//                System.out.println(message.logString() + " is an append, in the runnable");
 
-                System.out.println("1. Server: " + server.serverId + " received an append message");
-                try {
-                    file.requestResourceEvent(message);
-                    System.out.println("\t1a. append message has been sent to lamp file");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
             case Message.ACK:
 //                System.out.println(message.logString() + " is an ack, in the runnable");
 
@@ -56,6 +68,7 @@ public class HandleMessageRunnable implements Runnable {
                 break;
             case Message.RELEASE:
             case Message.REQUEST:
+                System.out.println("4. Request message arrived at server " + server.serverId);
             case Message.REPLY:
                 //must be coming from another server
                 //need to send to a lamport

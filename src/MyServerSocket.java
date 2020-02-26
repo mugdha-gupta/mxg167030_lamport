@@ -1,3 +1,5 @@
+import Message.*;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -46,8 +48,23 @@ public class MyServerSocket implements Runnable {
         return myServerSocket;
     }
 
-    synchronized void sendMessage(Message message) throws IOException {
-        System.out.println("Socket is onw sending message");
+    synchronized void sendMessage(RequestMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
+    synchronized void sendMessage(AckMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
+    synchronized void sendMessage(ReplyMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
+    synchronized void sendMessage(ServerAppendMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
+    synchronized void sendMessage(SuccessMessage message) throws IOException {
         out.writeObject(message);
     }
 
@@ -55,13 +72,13 @@ public class MyServerSocket implements Runnable {
     public void run() {
 
         ExecutorService pool = Executors.newFixedThreadPool(20);
-        Message m;
+        Object m;
         while(true){
             try {
                 if (!(in.available() <= 0))
                     continue;
-                m = (Message) in.readObject();
-                System.out.println("a message arrived at the socket");
+                m = in.readObject();
+//                System.out.println("a message arriived at the socket");
                 Thread.sleep(1000);
                 if(m == null)
                     continue;

@@ -1,3 +1,5 @@
+import Message.AppendMessage;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -35,8 +37,9 @@ public class FileClient {
             int fileNum = (int) (Math.random() *4) + 1;
             serverNum = 1;
             fileNum = 1;
-            Message message = new Message(Message.APPEND, fileNum, clientId, serverNum, messageNum);
-            System.out.println(message.logString() + " has been sent from client");
+
+            String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";;
+            AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
             clientSockets.get(serverNum).sendMessage(message);
         }
     }

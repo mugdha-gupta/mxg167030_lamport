@@ -1,3 +1,7 @@
+import Message.AppendMessage;
+import Message.ReplyMessage;
+import Message.RequestMessage;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,7 +15,7 @@ public class LamportFile {
     FileWriter fr;
 
     int lamportClock;
-    static PriorityQueue<Message> requestQueue;
+    static PriorityQueue<RequestMessage> requestQueue;
 
     HashMap<Integer, Integer> lastReceivedTimeFromConnections;
 
@@ -45,13 +49,13 @@ public class LamportFile {
 //        System.out.println("clock incremented to " + lamportClock);
     }
 
-    synchronized private void incrementClock(Message message){
+    synchronized private void incrementClock(int timeStamp){
         incrementClock();
-        lamportClock = Math.max(lamportClock, message.timeStamp+1);
+        lamportClock = Math.max(lamportClock, timeStamp+1);
 //        System.out.println("clock incremented to " +  lamportClock);
     }
 
-    synchronized void requestResourceEvent(Message message) throws IOException {
+    synchronized void requestResourceEvent(AppendMessage message) throws IOException {
         incrementClock();
         message.timeStamp = lamportClock;
         message.messageType = Message.REQUEST;
@@ -77,6 +81,17 @@ public class LamportFile {
         server.servers.get(serverId).sendMessage(message);
     }
 
+    synchronized void receiveRequestMessage(RequestMessage message) throws IOException {
+        incrementClock(message.getTimestamp());
+        setLastReceived(message.getRequestingServer(), message.getTimestamp());
+        System.out.println("\t4a. request message arrived at lamp file");
+        requestQueue.add(message);
+        ReplyMessage reply = new ReplyMessage(message.getClientId(), server.serverId, lamportClock, fileNum);
+        reply.timeStamp = lamportClock;
+        sendToServer(reply, message.serverId);
+        checkToEnterCS();
+    }
+
     synchronized void receiveMessageEvent(Message message) throws IOException {
 
 //        System.out.println(message.logString() + " message has been received in lamportFIle");
@@ -86,6 +101,34 @@ public class LamportFile {
         switch (message.messageType){
             case Message.REQUEST:
 //                System.out.println(message.logString() + " it is a request mesage");
+                System.out.println("\t4a. request message arrived at lamp file");
+                requestQueue.add(message);
+                Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, server.serverId, message.messageNum);
+                reply.timeStamp = lamportClock;
+                sendToServer(reply, message.serverId);
+
+//                System.out.println(message.logString() + " message has been added to request queue and sent to server");
+                break;
+            case Message.RELEASE:
+
+                processRelease(message);
+                break;
+        }
+
+        checkToEnterCS();
+    }
+
+
+    synchronized void receiveMessageEvent(Message message) throws IOException {
+
+//        System.out.println(message.logString() + " message has been received in lamportFIle");
+        incrementClock(message);
+        setLastReceived(message);
+
+        switch (message.messageType){
+            case Message.REQUEST:
+//                System.out.println(message.logString() + " it is a request mesage");
+                System.out.println("\t4a. request message arrived at lamp file");
                 requestQueue.add(message);
                 Message reply = new Message(Message.REPLY, message.fileNum, message.clientId, server.serverId, message.messageNum);
                 reply.timeStamp = lamportClock;
@@ -122,10 +165,10 @@ public class LamportFile {
         }
     }
 
-    synchronized private void setLastReceived(Message message) throws IOException {
+    synchronized private void setLastReceived(int serverId, int timeStamp) throws IOException {
 
 //        System.out.println(message.logString() + " setting lastReceived");
-        lastReceivedTimeFromConnections.put(message.serverId, message.timeStamp);
+        lastReceivedTimeFromConnections.put(serverId, timeStamp);
         System.out.println(lastReceivedTimeFromConnections.toString());
         checkToEnterCS();
     }

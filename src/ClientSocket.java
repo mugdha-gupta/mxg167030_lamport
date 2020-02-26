@@ -1,3 +1,6 @@
+import Message.AppendMessage;
+import Message.SuccessMessage;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -19,33 +22,27 @@ public class ClientSocket {
         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
-    Message sendMessage(Message message) throws IOException{
+    void sendMessage(AppendMessage message) throws IOException{
         out.writeObject(message);
-        System.out.println(message.logString() + " has left CLientSocket");
-        Message m = getMessage();
-        System.out.println(" CLIENT: i got the messgae");
-        switch (m.messageType){
-            case Message.ACK:
-                System.out.println(Message.successMessage);
-                break;
-            default:
-                System.out.println(Message.failMessage);
-                break;
-        }
-
-        return m;
+        SuccessMessage m = getMessage();
+        if(m == null)
+            System.out.println("client " + client.clientId +  " receives a failure from server " + serverId);
+        else
+            System.out.println(m.getSuccessMessge());
     }
 
-    Message getMessage() {
-        while (true){Message m;
+    SuccessMessage getMessage() {
+        while (true){
+            Object object;
             try {
                 if (!(in.available() <= 0))
                     continue;
-                m = (Message) in.readObject();
-                if(m == null)
+                object = in.readObject();
+                if(object == null)
                     continue;
-                return m;
-
+                if(object instanceof SuccessMessage)
+                    return (SuccessMessage) object;
+                return null;
             } catch (IOException | ClassNotFoundException e) {
                 continue;
             }
