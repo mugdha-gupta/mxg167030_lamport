@@ -93,6 +93,7 @@ public class LamportFile {
         System.out.println("\t4a. request message arrived at lamp file with timestamp " + message.getTimestamp());
         requestQueue.add(message);
         ReplyMessage reply = new ReplyMessage(message.getClientId(), server.serverId, lamportClock, fileNum);
+        System.out.println("\treply sent with timestamp " + lamportClock);
         sendToServer(reply, message.getRequestingServer());
         checkToEnterCS();
     }
