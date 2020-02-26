@@ -78,7 +78,7 @@ public class LamportFile {
     }
 
     synchronized private void sendToServer(ReplyMessage message, int serverId) throws IOException {
-//        System.out.println(message.logString() + " is being sent to server " + serverId);
+        System.out.println( " is being sent to server " + serverId);
         server.servers.get(serverId).sendMessage(message);
     }
 
@@ -93,6 +93,7 @@ public class LamportFile {
     }
 
     synchronized void receiveReleaseMessage(ReleaseMessage message) throws IOException {
+        System.out.println("received release mess");
         incrementClock(message.getTimestamp());
         setLastReceived(message.getRequestingServer(), message.getTimestamp());
         processRelease(message);
@@ -100,6 +101,7 @@ public class LamportFile {
     }
 
     synchronized void receiveReplyMessage(ReplyMessage message) throws IOException {
+        System.out.println("received reply mess");
         incrementClock(message.getTimestamp());
         setLastReceived(message.getSourceServer(), message.getTimestamp());
         checkToEnterCS();
@@ -107,18 +109,20 @@ public class LamportFile {
 
 
     synchronized private void processRelease(ReleaseMessage message) {
+        System.out.println("processing release");
         if(requestQueue.isEmpty())
             return;
         for (RequestMessage queuedMessage: requestQueue) {
             if(queuedMessage.getRequestingServer() == message.getRequestingServer() && queuedMessage.getClientId() == message.getClientId()){
                 requestQueue.remove(queuedMessage);
+                System.out.println("removed from queue");
             }
         }
     }
 
     synchronized private void setLastReceived(int serverId, int timeStamp) throws IOException {
 
-//        System.out.println(message.logString() + " setting lastReceived");
+        System.out.println( " setting lastReceived");
         lastReceivedTimeFromConnections.put(serverId, timeStamp);
         System.out.println(lastReceivedTimeFromConnections.toString());
         checkToEnterCS();
@@ -149,6 +153,7 @@ public class LamportFile {
     }
 
     synchronized private void synchronizeOtherServers(RequestMessage message) throws IOException {
+        System.out.println("synch other servers");
         ServerAppendMessage serverAppendMessage = new ServerAppendMessage(message.getClientId(), fileNum, message.getMessage(), server.serverId);
         for (MyServerSocket socket: server.servers.values()
              ) {
@@ -157,12 +162,14 @@ public class LamportFile {
     }
 
     synchronized public void writeToFile(ServerAppendMessage message) throws IOException {
+        System.out.println("writing to file");
         fr.write(message.getMessage());
         AckMessage ackMessage = new AckMessage(message.getClientId(), fileNum);
         server.servers.get(message.getSourceServer()).sendMessage(ackMessage);
     }
 
     synchronized public void releaseResourceEvent() throws IOException {
+        System.out.println("releasing resource");
         incrementClock();
 
         requestQueue.remove(messageBeingWrittenToCS);
