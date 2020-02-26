@@ -14,7 +14,7 @@ public class LamportFile {
 
 
     int lamportClock;
-    static PriorityQueue<RequestMessage> requestQueue;
+    PriorityQueue<RequestMessage> requestQueue;
 
     HashMap<Integer, Integer> lastReceivedTimeFromConnections;
 
@@ -41,7 +41,7 @@ public class LamportFile {
         System.out.println("trying to create " + filepath);
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
-        bw.write("File created by server " + server.serverId);
+        bw.write("File created by server " + server.serverId + "\n");
         bw.close();
     }
 
