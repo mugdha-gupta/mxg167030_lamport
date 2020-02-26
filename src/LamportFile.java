@@ -59,14 +59,14 @@ public class LamportFile {
     }
 
     synchronized void requestResourceEvent(AppendMessage message) throws IOException {
-        System.out.println("An append Request arrived at Server " + server.serverId + "\n");
+//        System.out.println("An append Request arrived at Server " + server.serverId + "\n");
         incrementClock();
         RequestMessage requestMessage = new RequestMessage(message.getClientId(), server.serverId, fileNum, lamportClock, message.getMessage());
-        System.out.println("REQUEST: \n" +
-                                    "\ttime:" + requestMessage.getTimestamp() +
-                                    "\tclientId:" + requestMessage.getClientId());
+//        System.out.println("REQUEST: \n" +
+//                                    "\ttime:" + requestMessage.getTimestamp() +
+//                                    "\tclientId:" + requestMessage.getClientId());
         requestQueue.add(requestMessage);
-        System.out.println("\tadded to queue");
+//        System.out.println("\tadded to queue");
 //        System.out.println("\t2a. message added to request queue: " + requestQueue.toString());
 //        System.out.println(message.logString() + " file is requesting resource, m has been added to the request Queue");
         sendToAll(requestMessage);
@@ -77,7 +77,7 @@ public class LamportFile {
     synchronized private void sendToAll(RequestMessage message) throws IOException {
         for (MyServerSocket serverSocket : server.servers.values()) {
             serverSocket.sendMessage(message);
-            System.out.println("\tsent to All");
+//            System.out.println("\tsent to All");
 //            System.out.println("3. Message type " + message.getClass().getName() + " sent to server " + serverSocket.remoteServerId);
         }
     }
@@ -96,21 +96,21 @@ public class LamportFile {
     synchronized void receiveRequestMessage(RequestMessage message) throws IOException {
         System.out.println("An Receive message arrived at Server " + server.serverId + "\n");
         incrementClock(message.getTimestamp());
-        System.out.println("REQUEST: \n" +
-                "\ttime:" + message.getTimestamp() +
-                "\tclientId:" + message.getClientId() +
-                "\trequesting server:" + message.getRequestingServer());
-        System.out.println("\ttimestamp set to " + lamportClock);
+//        System.out.println("REQUEST: \n" +
+//                "\ttime:" + message.getTimestamp() +
+//                "\tclientId:" + message.getClientId() +
+//                "\trequesting server:" + message.getRequestingServer());
+//        System.out.println("\ttimestamp set to " + lamportClock);
         setLastReceived(message.getRequestingServer(), message.getTimestamp());
 //        System.out.println("\t4a. request message arrived at lamp file with timestamp " + message.getTimestamp());
         requestQueue.add(message);
-        System.out.println("\trequest added to queue");
+//        System.out.println("\trequest added to queue");
         ReplyMessage reply = new ReplyMessage(message.getClientId(), server.serverId, lamportClock, fileNum);
-        System.out.println("REPLY: \n" +
-                "\ttime:" + reply.getTimestamp() +
-                "\tclientId:" + reply.getClientId());
+//        System.out.println("REPLY: \n" +
+//                "\ttime:" + reply.getTimestamp() +
+//                "\tclientId:" + reply.getClientId());
 //        System.out.println("\treply sent with timestamp " + lamportClock);
-        System.out.println("\tsending to " + message.getRequestingServer());
+//        System.out.println("\tsending to " + message.getRequestingServer());
         sendToServer(reply, message.getRequestingServer());
         checkToEnterCS();
     }
@@ -127,21 +127,21 @@ public class LamportFile {
 
     synchronized void receiveReplyMessage(ReplyMessage message) throws IOException {
 
-        System.out.println("A reply message arrived at Server " + server.serverId + "\n");
+//        System.out.println("A reply message arrived at Server " + server.serverId + "\n");
 //        System.out.println("received reply mess");
-        System.out.println("REPLY: \n" +
-                "\ttime:" + message.getTimestamp() +
-                "\tclientId:" + message.getClientId() +
-                "\treplyingServer:"+ message.getSourceServer());
+//        System.out.println("REPLY: \n" +
+//                "\ttime:" + message.getTimestamp() +
+//                "\tclientId:" + message.getClientId() +
+//                "\treplyingServer:"+ message.getSourceServer());
         incrementClock(message.getTimestamp());
-        System.out.println("\ttime stamp set to " + lamportClock);
+//        System.out.println("\ttime stamp set to " + lamportClock);
         setLastReceived(message.getSourceServer(), message.getTimestamp());
         checkToEnterCS();
     }
 
 
     synchronized private void processRelease(ReleaseMessage message) {
-//        System.out.println("processing release");
+        System.out.println("processing release");
         if(requestQueue.isEmpty())
             return;
         RequestMessage m = new RequestMessage(0,0,0,0,null);
@@ -190,7 +190,7 @@ public class LamportFile {
     }
 
     synchronized private void synchronizeOtherServers(RequestMessage message) throws IOException {
-//        System.out.println("synch other servers");
+        System.out.println("synch other servers");
         ServerAppendMessage serverAppendMessage = new ServerAppendMessage(message.getClientId(), fileNum, message.getMessage(), server.serverId);
         for (MyServerSocket socket: server.servers.values()
              ) {
