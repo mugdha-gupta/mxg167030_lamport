@@ -164,6 +164,7 @@ public class LamportFile {
     }
 
     synchronized private void checkToEnterCS() throws IOException {
+        System.out.println("checking to enter");
         if(requestQueue.isEmpty() || inCriticalSection == true)
             return;
         RequestMessage message = requestQueue.peek();
