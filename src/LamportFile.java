@@ -15,12 +15,15 @@ public class LamportFile {
 
     HashMap<Integer, Integer> lastReceivedTimeFromConnections;
 
+    boolean inCriticalSection;
+
     LamportFile(int fileNum, Server s) throws IOException {
         this.fileNum = fileNum;
         server = s;
         lamportClock = 0;
         requestQueue = new PriorityQueue<>();
         lastReceivedTimeFromConnections = new HashMap<>();
+        inCriticalSection = false;
         for (Integer id: server.servers.keySet()) {  lastReceivedTimeFromConnections.put(id, 0);}
 
         setFileWriter();
@@ -128,7 +131,7 @@ public class LamportFile {
     synchronized private void checkToEnterCS() throws IOException {
 
         System.out.println(" checking to enter the CS");
-        if(requestQueue.isEmpty())
+        if(requestQueue.isEmpty() || inCriticalSection == true)
             return;
         System.out.println(" queue not empty");
         Message message = requestQueue.peek();
@@ -148,6 +151,7 @@ public class LamportFile {
     }
 
     synchronized private void enterCSEvent(Message message) throws IOException {
+        inCriticalSection = true;
         incrementClock();
 
 
@@ -185,10 +189,8 @@ public class LamportFile {
 
         message.messageType = Message.RELEASE;
         message.timeStamp = lamportClock;
-
-
         sendToAll(message);
-
+        inCriticalSection = false;
         checkToEnterCS();
     }
 }
