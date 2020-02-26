@@ -1,4 +1,5 @@
 import Message.AppendMessage;
+import Message.EndMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -51,6 +52,12 @@ public class FileClient {
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
             clientSockets.get(serverNum).sendMessage(message);
         }
+
+        EndMessage endMessage = new EndMessage();
+        for(ClientSocket socket : clientSockets.values()){
+            socket.sendMessage(endMessage);
+        }
+
     }
 
     void setUpSocketsMap() throws IOException {

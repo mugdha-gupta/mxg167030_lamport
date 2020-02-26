@@ -1,4 +1,5 @@
 import Message.AppendMessage;
+import Message.EndMessage;
 import Message.StartMessage;
 import Message.SuccessMessage;
 
@@ -33,6 +34,13 @@ public class ClientSocket implements Runnable{
             System.out.println("client " + client.clientId +  " receives a failure from server " + serverId);
         else
             System.out.println(m.getSuccessMessge());
+    }
+
+    void sendMessage(EndMessage message) throws IOException {
+        out.writeObject(message);
+        out.close();
+        in.close();
+        socket.close();
     }
 
     SuccessMessage getMessage() throws IOException, ClassNotFoundException {

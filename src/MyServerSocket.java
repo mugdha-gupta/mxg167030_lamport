@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,6 +17,7 @@ public class MyServerSocket implements Runnable {
     ObjectOutputStream out;
     Socket socket;
     Server localServer;
+    CountDownLatch latch;
 
     private MyServerSocket(Server s, int remotePort) throws IOException {
         localServer = s;
@@ -57,6 +59,10 @@ public class MyServerSocket implements Runnable {
         out.writeObject(message);
     }
 
+    synchronized void sendMessage(ServerEndMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
 
     synchronized void sendMessage(AckMessage message) throws IOException {
         out.writeObject(message);
@@ -89,12 +95,25 @@ public class MyServerSocket implements Runnable {
                 Thread.sleep(1000);
                 if(m == null)
                     continue;
+                if(m instanceof EndMessage){
+                    clean();
+                    return;
+                }
+                if(m instanceof ServerEndMessage){
+                    latch.countDown();
+                }
                 pool.execute(new HandleMessageRunnable(m, localServer));
 
             } catch (IOException | ClassNotFoundException | InterruptedException e) {
                 continue;
             }
         }
+    }
+
+    void clean() throws IOException {
+        out.close();
+        in.close();
+        socket.close();
     }
 
 }

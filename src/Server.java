@@ -1,11 +1,14 @@
 import Message.AckMessage;
+import Message.ServerEndMessage;
 import Message.StartMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
     static Server server;
@@ -14,26 +17,28 @@ public class Server {
     HashMap<Integer, MyServerSocket> servers;
     HashMap<Integer, LamportFile> files;
     HashSet<AckMessage> ackMessages;
+    CountDownLatch latch;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         if(args.length != 1)
             return;
         int id = Integer.parseInt(args[0]);
         server = new Server(id);
     }
 
-    Server(int serverId) throws IOException {
+    Server(int serverId) throws IOException, InterruptedException {
         server = this;
         this.serverId = serverId;
         clients = new HashMap<>();
         servers = new HashMap<>();
         files = new HashMap<>();
         ackMessages = new HashSet<>();
+        latch = CountDownLatch(2);
         setUpMaps(serverId);
 
     }
 
-    private void setUpMaps(int serverId) throws IOException {
+    private void setUpMaps(int serverId) throws IOException, InterruptedException {
         switch (serverId){
             case 1 :
                 servers.put(2, MyServerSocket.createServerListenerSocket(server, 2));
@@ -60,21 +65,37 @@ public class Server {
         files.put(3, new LamportFile(3, server));
         files.put(4, new LamportFile(4, server));
 
-        ExecutorService pool = Executors.newFixedThreadPool(10);
+        ExecutorService serverPool = Executors.newFixedThreadPool(4);
         for (MyServerSocket socketRunnable: servers.values()
              ) {
-            pool.execute(socketRunnable);
+            socketRunnable.latch = latch;
+            serverPool.execute(socketRunnable);
         }
+
+        ExecutorService clientPool = Executors.newFixedThreadPool(6);
         for (MyServerSocket socketRunnable: clients.values()
         ) {
-            pool.execute(socketRunnable);
+            clientPool.execute(socketRunnable);
         }
+
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             socketRunnable.sendMessage(new StartMessage());
             System.out.println("sent start");
         }
 
+        clientPool.awaitTermination(10, TimeUnit.MINUTES);
+
+        for(MyServerSocket socket : servers.values()){
+            socket.sendMessage(new ServerEndMessage());
+        }
+
+        while(latch.getCount() > 0){
+        }
+
+        for(MyServerSocket socket : servers.values()){
+            socket.clean();
+        }
     }
 
 
