@@ -57,7 +57,6 @@ public class ClientSocket implements Runnable{
 
     @Override
     public void run() {
-        System.out.println("client socket started");
         while (true){
             Object object;
             try {
@@ -65,7 +64,6 @@ public class ClientSocket implements Runnable{
                 if(object == null)
                     continue;
                 if(object instanceof StartMessage){
-                    System.out.println("start message received on scoket");
                     latch.countDown();
                     return;
                 }

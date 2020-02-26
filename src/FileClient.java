@@ -37,7 +37,6 @@ public class FileClient {
     }
 
     private void startMessageGenerationLoop() throws InterruptedException, IOException, ClassNotFoundException {
-        System.out.println("starting message generation");
 
         for (int i = 0; i < 5; i++) {
             double waitTime = Math.random();

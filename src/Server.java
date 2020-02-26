@@ -33,7 +33,7 @@ public class Server {
         servers = new HashMap<>();
         files = new HashMap<>();
         ackMessages = new HashSet<>();
-        latch = CountDownLatch(2);
+        latch = new CountDownLatch(2);
         setUpMaps(serverId);
 
     }
@@ -81,7 +81,6 @@ public class Server {
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             socketRunnable.sendMessage(new StartMessage());
-            System.out.println("sent start");
         }
 
         clientPool.awaitTermination(10, TimeUnit.MINUTES);

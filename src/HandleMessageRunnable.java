@@ -22,10 +22,8 @@ public class HandleMessageRunnable implements Runnable {
         if(message instanceof AppendMessage){
             AppendMessage mess = (AppendMessage) message;
             file = server.getLamportFile(mess.getFileNum());
-            System.out.println("1. Server: " + server.serverId + " received an append message");
             try {
                 file.requestResourceEvent(mess);
-                System.out.println("\t1a. append message has been sent to lamp file");
             } catch (IOException e) {
                 e.printStackTrace();
             }
