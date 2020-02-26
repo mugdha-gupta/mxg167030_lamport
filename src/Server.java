@@ -57,6 +57,7 @@ public class Server {
         files.put(1, new LamportFile(1, server));
         files.put(2, new LamportFile(2, server));
         files.put(3, new LamportFile(3, server));
+        files.put(4, new LamportFile(4, server));
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         for (MyServerSocket socketRunnable: servers.values()
