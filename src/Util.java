@@ -9,7 +9,7 @@ public class Util {
     static String[] serverAdresses = {"dc01.utdallas.edu", "dc02.utdallas.edu", "dc03.utdallas.edu"};
 
      static final int SERVER_LISTENER_PORT = 13000;
-     static final int CLIENT_LISTENER_PORT = 14000;
+     static final int CLIENT_LISTENER_PORT = 12345;
 
      //returns a socket for the client
     static Socket getSocketAsClient(int serverId, int localPort, int remotePort) throws IOException {
