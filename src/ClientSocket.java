@@ -1,4 +1,5 @@
 import Message.AppendMessage;
+import Message.StartMessage;
 import Message.SuccessMessage;
 
 import java.io.BufferedInputStream;
@@ -22,7 +23,7 @@ public class ClientSocket {
         in = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
-    void sendMessage(AppendMessage message) throws IOException{
+    void sendMessage(AppendMessage message) throws IOException, ClassNotFoundException {
         out.writeObject(message);
         SuccessMessage m = getMessage();
         if(m == null)
@@ -31,25 +32,30 @@ public class ClientSocket {
             System.out.println(m.getSuccessMessge());
     }
 
-    SuccessMessage getMessage() {
+    SuccessMessage getMessage() throws IOException, ClassNotFoundException {
         while (true){
             Object object;
-            try {
-                if (!(in.available() <= 0))
-                    continue;
-                object = in.readObject();
-                if(object == null)
-                    continue;
-                if(object instanceof SuccessMessage)
-                    return (SuccessMessage) object;
-                return null;
-            } catch (IOException | ClassNotFoundException e) {
+            if (!(in.available() <= 0))
                 continue;
-            }
+            object = in.readObject();
+            if(object == null)
+                continue;
+            if(object instanceof SuccessMessage)
+                return (SuccessMessage) object;
+            return null;
         }
     }
 
-
-
-
+    void getStartMessage() throws IOException, ClassNotFoundException {
+        while (true){
+            Object object;
+            if(in.available() <= 0)
+                continue;
+            object = in.readObject();
+            if(object == null)
+                continue;
+            if(object instanceof StartMessage)
+                    return;
+        }
+    }
 }

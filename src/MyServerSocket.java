@@ -52,6 +52,11 @@ public class MyServerSocket implements Runnable {
         out.writeObject(message);
     }
 
+    synchronized void sendMessage(StartMessage message) throws IOException {
+        out.writeObject(message);
+    }
+
+
     synchronized void sendMessage(AckMessage message) throws IOException {
         out.writeObject(message);
     }

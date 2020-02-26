@@ -1,4 +1,5 @@
 import Message.AckMessage;
+import Message.StartMessage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -67,6 +68,11 @@ public class Server {
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             pool.execute(socketRunnable);
+        }
+
+        for (MyServerSocket socketRunnable: clients.values()
+        ) {
+            socketRunnable.sendMessage(new StartMessage());
         }
 
     }

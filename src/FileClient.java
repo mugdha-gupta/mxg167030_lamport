@@ -1,8 +1,10 @@
 import Message.AppendMessage;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class FileClient {
     static FileClient client;
@@ -17,16 +19,24 @@ public class FileClient {
 
     }
 
-    public FileClient(int id) throws IOException, InterruptedException {
+    public FileClient(int id) throws IOException, InterruptedException, ClassNotFoundException {
         client = this;
         clientId = id;
         setUpSocketsMap();
-        Thread.sleep(3000);
-        startMessageGenerationLoop();
-
+        startClient();
     }
 
-    private void startMessageGenerationLoop() throws InterruptedException, IOException{
+    private void startClient() throws InterruptedException, IOException, ClassNotFoundException {
+        ExecutorService pool = Executors.newFixedThreadPool(4);
+        for (ClientSocket socket: clientSockets.values()
+             ) {
+            pool.execute(new ClientStartRunnable(client, socket));
+        }
+        pool.awaitTermination(10, TimeUnit.SECONDS );
+        startMessageGenerationLoop();
+    }
+
+    private void startMessageGenerationLoop() throws InterruptedException, IOException, ClassNotFoundException {
         System.out.println("starting message generation");
         for (int i = 0; i < 1; i++) {
             double waitTime = Math.random();
