@@ -1,9 +1,6 @@
-import Message.AppendMessage;
-import Message.RequestMessage;
+import Message.*;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.nio.channels.AcceptPendingException;
 
 
 public class HandleMessageRunnable implements Runnable {
@@ -24,73 +21,75 @@ public class HandleMessageRunnable implements Runnable {
             file = server.getLamportFile(mess.getFileNum());
             System.out.println("1. Server: " + server.serverId + " received an append message");
             try {
-                file.requestResourceEvent(mess;
+                file.requestResourceEvent(mess);
                 System.out.println("\t1a. append message has been sent to lamp file");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         else if(message instanceof RequestMessage){
-
+            RequestMessage mess = (RequestMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            try {
+                file.receiveRequestMessage(mess);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-
-
-
-
-        switch (message.messageType){
-
-            case Message.ACK:
-//                System.out.println(message.logString() + " is an ack, in the runnable");
-
-                if(server.ackMessages.contains(message.fileNum)){
-//                    System.out.println(message.logString() + " 2nd ack, success");
-                    message.success = true;
+        else if(message instanceof ReleaseMessage){
+            ReleaseMessage mess = (ReleaseMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            try {
+                file.receiveReleaseMessage(mess);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(message instanceof ReplyMessage){
+            ReplyMessage mess = (ReplyMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            try {
+                file.receiveReplyMessage(mess);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(message instanceof AckMessage) {
+            AckMessage mess = (AckMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            boolean success = false;
+            AckMessage messToRem = new AckMessage(0, 0);
+            for (AckMessage ack : server.ackMessages) {
+                if (ack.getClientId() == mess.getClientId() && ack.getFileNum() == mess.getFileNum()) {
+                    //match found!
+                    success = true;
+                    messToRem = ack;
+                    break;
                 }
-                else
-                    server.ackMessages.add(message.fileNum);
-                if(message.success){
-                    server.ackMessages.remove(message.fileNum);
+            }
 
-                    try {
-                        server.clients.get(message.clientId).sendMessage(message);
-//                        System.out.println(" sent message to client");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        file.releaseResourceEvent(message);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                break;
-            case Message.RELEASE:
-            case Message.REQUEST:
-                System.out.println("4. Request message arrived at server " + server.serverId);
-            case Message.REPLY:
-                //must be coming from another server
-                //need to send to a lamport
-//                System.out.println(message.logString() + " is an "+ message.messageType +", in the runnable");
+            if (success) {
+                server.ackMessages.remove(messToRem);
+                SuccessMessage successMessage = new SuccessMessage("client " + mess.getClientId() +  " receives a successful ack from server " + server.serverId);
                 try {
-                    file.receiveMessageEvent(message);
+                    server.clients.get(mess.getClientId()).sendMessage(successMessage);
+                    file.releaseResourceEvent();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                break;
-            case Message.SERVER_APPEND:
-//                System.out.println(message.logString() + " is an SERVER APPEND, in the runnable");
 
-                try {
-                    file.writeToFile(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            default:
-
-                break;
-
+            } else {
+                server.ackMessages.add(mess);
+            }
+        }
+        else if(message instanceof ServerAppendMessage) {
+            ServerAppendMessage mess = (ServerAppendMessage) message;
+            file = server.getLamportFile(mess.getFileNum());
+            try {
+                file.writeToFile(mess);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

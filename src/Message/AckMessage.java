@@ -8,4 +8,12 @@ public class AckMessage {
         this.clientId = clientId;
         this.fileNum = fileNum;
     }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public int getFileNum() {
+        return fileNum;
+    }
 }

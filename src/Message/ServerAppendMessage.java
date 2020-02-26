@@ -12,4 +12,20 @@ public class ServerAppendMessage {
         this.message = message;
         this.sourceServer = sourceServer;
     }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public int getFileNum() {
+        return fileNum;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public int getSourceServer() {
+        return sourceServer;
+    }
 }

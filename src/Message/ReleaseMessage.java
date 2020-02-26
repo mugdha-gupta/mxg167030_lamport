@@ -1,14 +1,14 @@
 package Message;
 
-public class ReplyMessage {
+public class ReleaseMessage {
     int clientId;
-    int sourceServer;
+    int requestingServer;
     int timestamp;
     int fileNum;
 
-    public ReplyMessage(int clientId, int sourceServer, int timestamp, int fileNum) {
+    public ReleaseMessage(int clientId, int requestingServer, int timestamp, int fileNum) {
         this.clientId = clientId;
-        this.sourceServer = sourceServer;
+        this.requestingServer = requestingServer;
         this.timestamp = timestamp;
         this.fileNum = fileNum;
     }
@@ -17,8 +17,8 @@ public class ReplyMessage {
         return clientId;
     }
 
-    public int getSourceServer() {
-        return sourceServer;
+    public int getRequestingServer() {
+        return requestingServer;
     }
 
     public int getTimestamp() {

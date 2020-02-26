@@ -1,3 +1,5 @@
+import Message.AckMessage;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +12,7 @@ public class Server {
     HashMap<Integer, MyServerSocket> clients;
     HashMap<Integer, MyServerSocket> servers;
     HashMap<Integer, LamportFile> files;
-    HashSet<Integer> ackMessages;
+    HashSet<AckMessage> ackMessages;
 
     public static void main(String[] args) throws IOException {
         if(args.length != 1)
