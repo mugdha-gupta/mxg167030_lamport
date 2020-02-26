@@ -85,10 +85,7 @@ public class MyServerSocket implements Runnable {
         Object m;
         while(true){
             try {
-                if (in.available() <= 0)
-                    continue;
                 m = in.readObject();
-//                System.out.println("a message arriived at the socket");
                 Thread.sleep(1000);
                 if(m == null)
                     continue;
