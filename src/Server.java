@@ -7,7 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    static Server server;
     int serverId;
     HashMap<Integer, MyServerSocket> clients;
     HashMap<Integer, MyServerSocket> servers;
@@ -18,11 +17,10 @@ public class Server {
         if(args.length != 1)
             return;
         int id = Integer.parseInt(args[0]);
-        server = new Server(id);
+        new Server(id);
     }
 
     Server(int serverId) throws IOException {
-        server = this;
         this.serverId = serverId;
         clients = new HashMap<>();
         servers = new HashMap<>();
@@ -35,29 +33,29 @@ public class Server {
     private void setUpMaps(int serverId) throws IOException {
         switch (serverId){
             case 1 :
-                servers.put(2, MyServerSocket.createServerListenerSocket(server, 2));
-                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
+                servers.put(2, MyServerSocket.createServerListenerSocket(this, 2));
+                servers.put(3, MyServerSocket.createServerListenerSocket(this, 3));
                 break;
             case 2 :
-                servers.put(1, MyServerSocket.createServerSocket(server, 1, Util.SERVER_LISTENER_PORT+1));
-                servers.put(3, MyServerSocket.createServerListenerSocket(server, 3));
+                servers.put(1, MyServerSocket.createServerSocket(this, 1, Util.SERVER_LISTENER_PORT+1));
+                servers.put(3, MyServerSocket.createServerListenerSocket(this, 3));
                 break;
             case 3 :
-                servers.put(1, MyServerSocket.createServerSocket(server, 1, Util.SERVER_LISTENER_PORT+1));
-                servers.put(2, MyServerSocket.createServerSocket(server, 2, Util.SERVER_LISTENER_PORT+2));
+                servers.put(1, MyServerSocket.createServerSocket(this, 1, Util.SERVER_LISTENER_PORT+1));
+                servers.put(2, MyServerSocket.createServerSocket(this, 2, Util.SERVER_LISTENER_PORT+2));
                 break;
         }
 
-        clients.put(1, MyServerSocket.createServerClientSocket(server, 1));
-        clients.put(2, MyServerSocket.createServerClientSocket(server, 2));
-        clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
-        clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
-        clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
+        clients.put(1, MyServerSocket.createServerClientSocket(this, 1));
+        clients.put(2, MyServerSocket.createServerClientSocket(this, 2));
+        clients.put(3, MyServerSocket.createServerClientSocket(this, 3));
+//        clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
+//        clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
 
-        files.put(1, new LamportFile(1, server));
-        files.put(2, new LamportFile(2, server));
-        files.put(3, new LamportFile(3, server));
-        files.put(4, new LamportFile(4, server));
+        files.put(1, new LamportFile(1, this));
+        files.put(2, new LamportFile(2, this));
+        files.put(3, new LamportFile(3, this));
+        files.put(4, new LamportFile(4, this));
 
         ExecutorService pool = Executors.newFixedThreadPool(10);
         for (MyServerSocket socketRunnable: servers.values()
