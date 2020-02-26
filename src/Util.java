@@ -8,8 +8,8 @@ import java.net.Socket;
 public class Util {
     static String[] serverAdresses = {"dc01.utdallas.edu", "dc02.utdallas.edu", "dc03.utdallas.edu"};
 
-     static final int SERVER_LISTENER_PORT = 11888;
-     static final int CLIENT_LISTENER_PORT = 11999;
+     static final int SERVER_LISTENER_PORT = 13000;
+     static final int CLIENT_LISTENER_PORT = 14000;
 
      //returns a socket for the client
     static Socket getSocketAsClient(int serverId, int localPort, int remotePort) throws IOException {
