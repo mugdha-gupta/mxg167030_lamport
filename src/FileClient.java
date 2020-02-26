@@ -43,8 +43,7 @@ public class FileClient {
 
             int messageNum = i + 1;
             int serverNum = (int) (Math.random() * 3) + 1;
-            int fileNum = (int) (Math.random() *4) + 1;
-            fileNum = 1;
+            int fileNum = (int) (Math.random() *2) + 1;
 
             String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
