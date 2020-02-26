@@ -37,7 +37,7 @@ public class FileClient {
 
     private void startMessageGenerationLoop() throws InterruptedException, IOException, ClassNotFoundException {
         System.out.println("starting message generation");
-        String messageString = "client " + clientId + " message # " + 1 + "for file "+ 2 + "-- server" + 2 + "\n";
+        String messageString = "client " + clientId + " message # " + 1 + "for file "+ 1 + "-- server" + 2 + "\n";
         AppendMessage message = new AppendMessage(clientId, 2, messageString);
 
         if(clientId == 2)
