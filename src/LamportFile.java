@@ -1,4 +1,5 @@
 import Message.*;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,15 +36,17 @@ public class LamportFile {
         setFileWriter();
     }
 
-    private void setFileWriter() throws IOException {
+    synchronized private void setFileWriter() throws IOException {
         filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + server.serverId + "/" + "f" + fileNum + ".txt";
         System.out.println("trying to create " + filepath);
-        File file = new File(filepath);
-        file.delete();
-        file.createNewFile();
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(filepath));
+        bw.write("File created by server " + server.serverId);
+        bw.close();
     }
 
     synchronized void appendToFile(String message) throws IOException {
+        System.out.println("******appending to file message : " + message);
         BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, true));
         bw.write(message);
         bw.close();
@@ -185,6 +188,10 @@ public class LamportFile {
         inCriticalSection = true;
         messageBeingWrittenToCS = message;
         incrementClock();
+        System.out.println("***********WRITING TO FILE************");
+        System.out.println("\t\t***Server " + server.serverId + " writing to file " +
+                fileNum + " for client " + message.getClientId() + " for req for file " + message.getFileNum() +
+                " on server " + message.getRequestingServer());
         appendToFile(message.getMessage());
         synchronizeOtherServers(message);
     }
@@ -199,7 +206,10 @@ public class LamportFile {
     }
 
     synchronized public void writeToFile(ServerAppendMessage message) throws IOException {
-//        System.out.println("writing to file");
+        System.out.println("");
+        System.out.println("\t\t***Server " + server.serverId + " writing to file " +
+                fileNum + " for client " + message.getClientId() + " for req for file " + message.getFileNum() +
+                " on server " + message.getSourceServer());
         appendToFile(message.getMessage());
         AckMessage ackMessage = new AckMessage(message.getClientId(), fileNum);
         server.servers.get(message.getSourceServer()).sendMessage(ackMessage);
