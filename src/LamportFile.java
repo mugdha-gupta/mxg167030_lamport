@@ -62,17 +62,17 @@ public class LamportFile {
         incrementClock();
         RequestMessage requestMessage = new RequestMessage(message.getClientId(), server.serverId, fileNum, lamportClock, message.getMessage());
         requestQueue.add(requestMessage);
-        System.out.println("\t2a. message added to request queue: " + requestQueue.toString());
+//        System.out.println("\t2a. message added to request queue: " + requestQueue.toString());
 //        System.out.println(message.logString() + " file is requesting resource, m has been added to the request Queue");
         sendToAll(requestMessage);
-        System.out.println("\t2b. message sent to all other servers");
+//        System.out.println("\t2b. message sent to all other servers");
         checkToEnterCS();
     }
 
     synchronized private void sendToAll(RequestMessage message) throws IOException {
         for (MyServerSocket serverSocket : server.servers.values()) {
             serverSocket.sendMessage(message);
-            System.out.println("3. Message type " + message.getClass().getName() + " sent to server " + serverSocket.remoteServerId);
+//            System.out.println("3. Message type " + message.getClass().getName() + " sent to server " + serverSocket.remoteServerId);
         }
     }
     synchronized private void sendToAll(ReleaseMessage message) throws IOException {
@@ -90,7 +90,7 @@ public class LamportFile {
     synchronized void receiveRequestMessage(RequestMessage message) throws IOException {
         incrementClock(message.getTimestamp());
         setLastReceived(message.getRequestingServer(), message.getTimestamp());
-        System.out.println("\t4a. request message arrived at lamp file");
+        System.out.println("\t4a. request message arrived at lamp file with timestamp " + message.getTimestamp());
         requestQueue.add(message);
         ReplyMessage reply = new ReplyMessage(message.getClientId(), server.serverId, lamportClock, fileNum);
         sendToServer(reply, message.getRequestingServer());
@@ -153,6 +153,7 @@ public class LamportFile {
     }
 
     synchronized private void enterCSEvent(RequestMessage message) throws IOException {
+        System.out.println("entering CS");;
         inCriticalSection = true;
         messageBeingWrittenToCS = message;
         incrementClock();
