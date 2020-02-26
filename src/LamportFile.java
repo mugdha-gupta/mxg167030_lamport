@@ -1,5 +1,6 @@
 import Message.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +11,6 @@ public class LamportFile {
     int fileNum;
     Server server;
 
-    FileWriter fr;
 
     int lamportClock;
     static PriorityQueue<RequestMessage> requestQueue;
@@ -19,6 +19,8 @@ public class LamportFile {
 
     boolean inCriticalSection;
     RequestMessage messageBeingWrittenToCS;
+
+    String filepath;
 
     LamportFile(int fileNum, Server s) throws IOException {
         this.fileNum = fileNum;
@@ -34,14 +36,17 @@ public class LamportFile {
     }
 
     private void setFileWriter() throws IOException {
-        String filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + server.serverId + "/" + "f" + fileNum + ".txt";
+        filepath = "/home/012/m/mx/mxg167030/mxg167030_lamport/server" + server.serverId + "/" + "f" + fileNum + ".txt";
         System.out.println("trying to create " + filepath);
         File file = new File(filepath);
         file.delete();
         file.createNewFile();
-        fr = new FileWriter(file, true);
-        fr.write("appended to file\n");
-        System.out.println("created file");
+    }
+
+    synchronized void appendToFile(String message) throws IOException {
+        BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, true));
+        bw.write(message);
+        bw.close();
     }
 
     synchronized private void incrementClock() {
@@ -148,7 +153,7 @@ public class LamportFile {
         inCriticalSection = true;
         messageBeingWrittenToCS = message;
         incrementClock();
-        fr.write(message.getMessage());
+        appendToFile(message.getMessage());
         synchronizeOtherServers(message);
     }
 
@@ -163,7 +168,7 @@ public class LamportFile {
 
     synchronized public void writeToFile(ServerAppendMessage message) throws IOException {
         System.out.println("writing to file");
-        fr.write(message.getMessage());
+        appendToFile(message.getMessage());
         AckMessage ackMessage = new AckMessage(message.getClientId(), fileNum);
         server.servers.get(message.getSourceServer()).sendMessage(ackMessage);
     }

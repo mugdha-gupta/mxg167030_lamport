@@ -68,11 +68,6 @@ public class Server {
             pool.execute(socketRunnable);
         }
 
-        for (MyServerSocket socket: clients.values()
-             ) {
-            socket.sendMessage((Integer) 5);
-        }
-
     }
 
 

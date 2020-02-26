@@ -28,7 +28,6 @@ public class FileClient {
     }
 
     private void startMessageGenerationLoop() throws InterruptedException, IOException{
-        getGoAhead();
         System.out.println("starting message generation");
         for (int i = 0; i < 1; i++) {
             double waitTime = Math.random();
@@ -43,11 +42,6 @@ public class FileClient {
             String messageString = "client " + clientId + " message #" + messageNum + " -- server" + serverNum + "\n";;
             AppendMessage message = new AppendMessage(clientId, fileNum, messageString);
             clientSockets.get(serverNum).sendMessage(message);
-        }
-    }
-
-    private void getGoAhead() {
-        while (!(clientSockets.get(1).start && clientSockets.get(2).start && clientSockets.get(3).start)){
         }
     }
 
