@@ -45,6 +45,7 @@ public class MyServerSocket implements Runnable {
 
     static MyServerSocket createServerSocket(Server s, int remoteServerId, int localPort) throws IOException {
         MyServerSocket myServerSocket = new MyServerSocket(s, remoteServerId, localPort);
+        myServerSocket.remoteServerId = remoteServerId;
         return myServerSocket;
     }
 
@@ -79,12 +80,19 @@ public class MyServerSocket implements Runnable {
 
     @Override
     public void run() {
+        if(clientId != 0){
+            try {
+                sendMessage(new StartMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         ExecutorService pool = Executors.newFixedThreadPool(20);
         Object m;
         while(true){
             try {
-                if (!(in.available() <= 0))
+                if (in.available() <= 0)
                     continue;
                 m = in.readObject();
 //                System.out.println("a message arriived at the socket");

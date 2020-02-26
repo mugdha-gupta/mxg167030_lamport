@@ -7,15 +7,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.concurrent.CountDownLatch;
 
-public class ClientSocket {
+public class ClientSocket implements Runnable{
     FileClient client;
     int serverId;
     ObjectInputStream in;
     ObjectOutputStream out;
     Socket socket;
+    CountDownLatch latch;
 
-    public ClientSocket(FileClient client, int serverId, int localPort) throws IOException {
+    public ClientSocket(FileClient client, int serverId, int localPort, CountDownLatch latch) throws IOException {
         this.client = client;
         this.serverId = serverId;
         socket = Util.getSocketAsClient(serverId, localPort, Util.CLIENT_LISTENER_PORT);
@@ -35,7 +37,7 @@ public class ClientSocket {
     SuccessMessage getMessage() throws IOException, ClassNotFoundException {
         while (true){
             Object object;
-            if (!(in.available() <= 0))
+            if (in.available() <= 0)
                 continue;
             object = in.readObject();
             if(object == null)
@@ -46,16 +48,24 @@ public class ClientSocket {
         }
     }
 
-    void getStartMessage() throws IOException, ClassNotFoundException {
+    @Override
+    public void run() {
         while (true){
             Object object;
-            if(in.available() <= 0)
-                continue;
-            object = in.readObject();
-            if(object == null)
-                continue;
-            if(object instanceof StartMessage)
+            try {
+                if (in.available() <= 0)
+                    continue;
+                object = in.readObject();
+                if(object == null)
+                    continue;
+                if(object instanceof StartMessage){
+                    latch.countDown();
                     return;
+                }
+                    return;
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
