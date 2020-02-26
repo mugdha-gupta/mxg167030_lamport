@@ -43,13 +43,13 @@ public class FileClient {
 //        if(clientId == 2)
 //            clientSockets.get(2).sendMessage(message);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             double waitTime = Math.random();
             Thread.sleep((int) waitTime * 1000);
 
             int messageNum = i + 1;
             int serverNum = (int) (Math.random() * 3) + 1;
-            int fileNum = (int) (Math.random() *2) + 1;
+            int fileNum = (int) (Math.random() *4) + 1;
 
             String messageString = "client " + clientId + " message #" + messageNum + "for file "+ fileNum + "-- server" + serverNum + "\n";
             System.out.println(messageString);
