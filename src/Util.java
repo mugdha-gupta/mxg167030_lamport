@@ -18,7 +18,7 @@ public class Util {
         InetSocketAddress localInsa = new InetSocketAddress(InetAddress.getLocalHost(), localPort);
         System.out.println("created local insa for port " + localPort );
         socket.bind(localInsa);
-        System.out.println("bound address");
+        System.out.println("bound address for " + serverId);
 
         InetSocketAddress remoteInsa = new InetSocketAddress(serverAdresses[serverId-1], remotePort);
         System.out.println("created remote insa for address " +  serverAdresses[serverId-1] + " on port remotePort");
