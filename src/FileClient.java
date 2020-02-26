@@ -23,7 +23,7 @@ public class FileClient {
     public FileClient(int id) throws IOException, InterruptedException, ClassNotFoundException {
         client = this;
         clientId = id;
-        latch = new CountDownLatch(5);
+        latch = new CountDownLatch(3);
         setUpSocketsMap();
         ExecutorService pool = Executors.newFixedThreadPool(3);
         for (ClientSocket socket: clientSockets.values()) {
