@@ -16,6 +16,9 @@ public class HandleMessageRunnable implements Runnable {
     public void run() {
         LamportFile file;
 
+        if(message == null)
+            return;
+
         if(message instanceof AppendMessage){
             AppendMessage mess = (AppendMessage) message;
             file = server.getLamportFile(mess.getFileNum());
