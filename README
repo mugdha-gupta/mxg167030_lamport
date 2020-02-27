@@ -1,0 +1,14 @@
+To run the program:
+
+1. download program or git clone https://github.com/mugdha-gupta/mxg167030_lamport.git
+2. navigate to src directory
+3. in Util.java, set the serverAdresses to whatever is being used
+4. in LamportFile.java set the filepath text part to whatever directory is being used
+  *NOTE: do not change the mxg167030_lamport/server and on part, just the part before indicating what directory
+	the project mxg167030_lamport is in 
+5. run javac *.java
+6. in the dc.. windows specified in Util.java open servers using
+ ~java Server [server_id] syntax on cmd line
+7. on any five servers open clients
+ ~java FileClient [client_id]
+
