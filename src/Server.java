@@ -113,16 +113,6 @@ public class Server {
         while(latch.getCount() > 0){
         }
 
-        //shutdown streams in the server sockets
-        for(MyServerSocket socket : servers.values()){
-            socket.clean();
-        }
-
-        //end all threads and exit program
-
-        System.out.println("***********2");
-        serverPool.shutdown();
-        System.out.println("***********");
         exit(0);
 
     }

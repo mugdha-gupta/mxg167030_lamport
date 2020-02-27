@@ -22,7 +22,7 @@ public class MyServerSocket implements Runnable {
     ObjectOutputStream out;
     Socket socket;
     Server localServer;
-    CountDownLatch latch;
+    static CountDownLatch latch;
 
     //private constructors so other classes need to create in many different ways for different uses
     private MyServerSocket(Server s, int remotePort) throws IOException {

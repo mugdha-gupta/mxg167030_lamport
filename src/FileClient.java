@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static java.lang.System.exit;
+
 /*
  * FileClient
  * allows user to use command line to specify
@@ -74,6 +77,8 @@ public class FileClient {
         for(ClientSocket socket : clientSockets.values()){
             socket.sendMessage(endMessage);
         }
+
+        exit(0);
 
     }
 
