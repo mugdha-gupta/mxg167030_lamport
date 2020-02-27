@@ -108,9 +108,10 @@ public class Server {
         for(MyServerSocket socket : servers.values()){
             socket.sendMessage(new ServerEndMessage());
         }
-        System.out.println("***");
+
         latch.await();
-        System.out.println("III2");
+        System.out.println("server " +  serverId  + " gracefully shutdown");
+        exit(0);
 
     }
 

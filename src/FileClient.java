@@ -71,14 +71,14 @@ public class FileClient {
             //send append message
             clientSockets.get(serverNum).sendMessage(message);
         }
-        System.out.println("*******2222");
-
         //after all the clients are done, send a done message to all the servers
         EndMessage endMessage = new EndMessage();
         for(ClientSocket socket : clientSockets.values()){
             socket.sendMessage(endMessage);
         }
-        System.out.println("*******");
+
+        System.out.println("client " +  clientId  + " gracefully shutdown");
+
         exit(0);
 
     }
