@@ -87,7 +87,7 @@ public class MyServerSocket implements Runnable {
     @Override
     public void run() {
 
-        ExecutorService pool = Executors.newFixedThreadPool(7);
+        ExecutorService pool = Executors.newFixedThreadPool(10);
         Object m;
         while(true){
             try {
@@ -96,10 +96,12 @@ public class MyServerSocket implements Runnable {
                 if(m == null)
                     continue;
                 if(m instanceof EndMessage){
+                    System.out.println("****************2");
                     clean();
                     return;
                 }
                 if(m instanceof ServerEndMessage){
+                    System.out.println("*********************");
                     latch.countDown();
                 }
                 pool.execute(new HandleMessageRunnable(m, localServer));

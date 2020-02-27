@@ -16,7 +16,7 @@ public class Util {
      static final int SERVER_LISTENER_PORT = 13000;
      static final int CLIENT_LISTENER_PORT = 12345;
 
-     //returns a socket
+     //returns a socket to a client connection
     static Socket getSocketAsClient(int serverId, int localPort, int remotePort) throws IOException {
         Socket socket = new Socket();
         socket.setReuseAddress(true);
@@ -28,7 +28,7 @@ public class Util {
         return socket;
     }
 
-    //returns a socket for the server
+    //returns a socket to a server
     static Socket getSocketAsServer(int remotePort) throws IOException {
         ServerSocket listener = new ServerSocket(remotePort);
         Socket socket = listener.accept();

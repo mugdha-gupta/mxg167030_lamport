@@ -10,6 +10,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+/*
+ * Server class
+ * Called from command line to create a server process
+ * needs to be given a number as the server id
+ */
+
 public class Server {
     static Server server;
     int serverId;
