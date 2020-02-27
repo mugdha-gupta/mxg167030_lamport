@@ -96,6 +96,9 @@ public class Server {
         for(MyServerSocket socket : servers.values()){
             socket.clean();
         }
+
+        serverPool.shutdown();
+        
     }
 
 
