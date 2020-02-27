@@ -87,7 +87,7 @@ public class MyServerSocket implements Runnable {
     @Override
     public void run() {
 
-        ExecutorService pool = Executors.newFixedThreadPool(15);
+        ExecutorService pool = Executors.newFixedThreadPool(10);
         Object m;
         while(true){
             try {
