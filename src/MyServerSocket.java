@@ -92,7 +92,6 @@ public class MyServerSocket implements Runnable {
         while(true){
             try {
                 m = in.readObject();
-                Thread.sleep(1000);
                 if(m == null)
                     continue;
                 if(m instanceof EndMessage){
@@ -106,7 +105,7 @@ public class MyServerSocket implements Runnable {
                 }
                 pool.execute(new HandleMessageRunnable(m, localServer));
 
-            } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 continue;
             }
         }

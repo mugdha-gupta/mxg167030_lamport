@@ -30,6 +30,7 @@ public class HandleMessageRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
         else if(message instanceof RequestMessage){
             RequestMessage mess = (RequestMessage) message;
@@ -39,6 +40,7 @@ public class HandleMessageRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
         else if(message instanceof ReleaseMessage){
             ReleaseMessage mess = (ReleaseMessage) message;
@@ -48,6 +50,7 @@ public class HandleMessageRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
         else if(message instanceof ReplyMessage){
             ReplyMessage mess = (ReplyMessage) message;
@@ -57,6 +60,7 @@ public class HandleMessageRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
         else if(message instanceof AckMessage) {
             AckMessage mess = (AckMessage) message;
@@ -86,6 +90,7 @@ public class HandleMessageRunnable implements Runnable {
             } else {
                 server.ackMessages.add(mess);
             }
+            return;
         }
         else if(message instanceof ServerAppendMessage) {
             ServerAppendMessage mess = (ServerAppendMessage) message;
@@ -95,6 +100,7 @@ public class HandleMessageRunnable implements Runnable {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return;
         }
     }
 }

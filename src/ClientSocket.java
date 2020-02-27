@@ -44,8 +44,8 @@ public class ClientSocket implements Runnable{
     }
 
     SuccessMessage getMessage() throws IOException, ClassNotFoundException {
+        Object object;
         while (true){
-            Object object;
             object = in.readObject();
             if(object == null)
                 continue;
@@ -57,8 +57,8 @@ public class ClientSocket implements Runnable{
 
     @Override
     public void run() {
+        Object object;
         while (true){
-            Object object;
             try {
                 object = in.readObject();
                 if(object == null)

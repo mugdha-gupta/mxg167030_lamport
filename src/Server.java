@@ -25,6 +25,7 @@ public class Server {
     HashSet<AckMessage> ackMessages;
     CountDownLatch latch;
 
+    //get server id from command line and instantiate server
     public static void main(String[] args) throws IOException, InterruptedException {
         if(args.length != 1)
             return;
@@ -32,6 +33,7 @@ public class Server {
         server = new Server(id);
     }
 
+    //constructor sets variables and sets up sockets
     Server(int serverId) throws IOException, InterruptedException {
         System.out.println("server " + serverId + " starts at time: " + System.currentTimeMillis());
         server = this;
@@ -45,7 +47,9 @@ public class Server {
 
     }
 
+    //sets up sockets to other servers and clients and creates the lamport files
     private void setUpMaps(int serverId) throws IOException, InterruptedException {
+        //create server sockets based on which server this is
         switch (serverId){
             case 1 :
                 servers.put(2, MyServerSocket.createServerListenerSocket(server, 2));
@@ -61,17 +65,20 @@ public class Server {
                 break;
         }
 
+        //connect to the clients
         clients.put(1, MyServerSocket.createServerClientSocket(server, 1));
         clients.put(2, MyServerSocket.createServerClientSocket(server, 2));
         clients.put(3, MyServerSocket.createServerClientSocket(server, 3));
         clients.put(4, MyServerSocket.createServerClientSocket(server, 4));
         clients.put(5, MyServerSocket.createServerClientSocket(server, 5));
 
+        //initialize the lamport files
         files.put(1, new LamportFile(1, server));
         files.put(2, new LamportFile(2, server));
         files.put(3, new LamportFile(3, server));
         files.put(4, new LamportFile(4, server));
 
+        //Start up serverSocket in new thread to monitor for any incoming messages
         ExecutorService serverPool = Executors.newFixedThreadPool(3);
         for (MyServerSocket socketRunnable: servers.values()
              ) {
@@ -79,23 +86,28 @@ public class Server {
             serverPool.execute(socketRunnable);
         }
 
+        //start up client sockets to listen for append messages
         ExecutorService clientPool = Executors.newFixedThreadPool(5);
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             clientPool.execute(socketRunnable);
         }
 
+        //send the clients start message so they all start when everything is ready
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             socketRunnable.sendMessage(new StartMessage());
         }
 
-        clientPool.awaitTermination(10, TimeUnit.MINUTES);
+        //when all the clients have exited, we can move on
+        clientPool.awaitTermination(15, TimeUnit.MINUTES);
 
+        //tell the other servers your clients are done
         for(MyServerSocket socket : servers.values()){
             socket.sendMessage(new ServerEndMessage());
         }
 
+        //countdown latch waits until all the servers have sent end message
         while(latch.getCount() > 0){
         }
 
