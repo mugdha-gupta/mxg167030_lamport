@@ -119,7 +119,10 @@ public class Server {
         }
 
         //end all threads and exit program
+
+        System.out.println("***********2");
         serverPool.shutdown();
+        System.out.println("***********");
         exit(0);
 
     }
