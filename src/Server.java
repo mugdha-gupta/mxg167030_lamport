@@ -102,17 +102,15 @@ public class Server {
         }
 
         //when all the clients have exited, we can move on
+        clientPool.shutdown();
         clientPool.awaitTermination(15, TimeUnit.MINUTES);
-
+        System.out.println("****");
         //tell the other servers your clients are done
         for(MyServerSocket socket : servers.values()){
             socket.sendMessage(new ServerEndMessage());
         }
-        System.out.println("*********");
-        //countdown latch waits until all the servers have sent end message
-        latch.await();
-        System.out.println("*******");
-        exit(0);
+
+
 
     }
 
