@@ -73,41 +73,44 @@ public class HandleMessageRunnable implements Runnable {
         }
         //its an acknowledge message
         else if(message instanceof AckMessage) {
-            AckMessage mess = (AckMessage) message;
-            file = server.getLamportFile(mess.getFileNum());
-            boolean success = false;
-            AckMessage messToRem = new AckMessage(0, 0);
-            //if we have seen one ack message for the same request server, client, and file num
-            //then this is the second ack message
-            //then we are done
-            for (AckMessage ack : server.ackMessages) {
-                if (ack.getClientId() == mess.getClientId() && ack.getFileNum() == mess.getFileNum()) {
-                    //match found!
-                    success = true;
-                    messToRem = ack;
-                    break;
-                }
-            }
-            //we are done with this append message
-            if (success) {
-                server.ackMessages.remove(messToRem);
-                SuccessMessage successMessage = new SuccessMessage("client " + mess.getClientId() +  " receives a successful ack from server " + server.serverId);
-                try {
-                    //send the client the acknowledge message to indicate success
-                    server.clients.get(mess.getClientId()).sendMessage(successMessage);
-                    //tell the lamport file to release the resource
-                    file.releaseResourceEvent();
-                    System.out.println("server " + server.serverId + " sends successful ack to to client " + mess.getClientId());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            synchronized (server.ackMessages){
 
+                AckMessage mess = (AckMessage) message;
+                file = server.getLamportFile(mess.getFileNum());
+                boolean success = false;
+                AckMessage messToRem = new AckMessage(0, 0);
+                //if we have seen one ack message for the same request server, client, and file num
+                //then this is the second ack message
+                //then we are done
+                for (AckMessage ack : server.ackMessages) {
+                    if (ack.getClientId() == mess.getClientId() && ack.getFileNum() == mess.getFileNum()) {
+                        //match found!
+                        success = true;
+                        messToRem = ack;
+                        break;
+                    }
+                }
+                //we are done with this append message
+                if (success) {
+                    server.ackMessages.remove(messToRem);
+                    SuccessMessage successMessage = new SuccessMessage("client " + mess.getClientId() +  " receives a successful ack from server " + server.serverId);
+                    try {
+                        //send the client the acknowledge message to indicate success
+                        server.clients.get(mess.getClientId()).sendMessage(successMessage);
+                        //tell the lamport file to release the resource
+                        file.releaseResourceEvent();
+                        System.out.println("server " + server.serverId + " sends successful ack to to client " + mess.getClientId());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                //otherwise record the first ack message received for this resource
+                else {
+                    server.ackMessages.add(mess);
+                }
+                return;
             }
-            //otherwise record the first ack message received for this resource
-            else {
-                server.ackMessages.add(mess);
-            }
-            return;
         }
         //if its a server append message
         else if(message instanceof ServerAppendMessage) {
