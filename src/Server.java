@@ -66,14 +66,14 @@ public class Server {
         files.put(3, new LamportFile(3, server));
         files.put(4, new LamportFile(4, server));
 
-        ExecutorService serverPool = Executors.newFixedThreadPool(4);
+        ExecutorService serverPool = Executors.newFixedThreadPool(3);
         for (MyServerSocket socketRunnable: servers.values()
              ) {
             socketRunnable.latch = latch;
             serverPool.execute(socketRunnable);
         }
 
-        ExecutorService clientPool = Executors.newFixedThreadPool(6);
+        ExecutorService clientPool = Executors.newFixedThreadPool(5);
         for (MyServerSocket socketRunnable: clients.values()
         ) {
             clientPool.execute(socketRunnable);
