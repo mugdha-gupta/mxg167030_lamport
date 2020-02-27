@@ -2,6 +2,8 @@ package Message;
 
 import java.io.Serializable;
 
+//message that requests a resource
+//implements comparable to allow it to get stored in a priority queue
 public class RequestMessage implements Serializable, Comparable {
     int clientId;
     int requestingServer;

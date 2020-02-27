@@ -10,6 +10,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.exit;
+
 /*
  * Server class
  * Called from command line to create a server process
@@ -111,11 +113,14 @@ public class Server {
         while(latch.getCount() > 0){
         }
 
+        //shutdown streams in the server sockets
         for(MyServerSocket socket : servers.values()){
             socket.clean();
         }
 
+        //end all threads and exit program
         serverPool.shutdown();
+        exit(0);
 
     }
 

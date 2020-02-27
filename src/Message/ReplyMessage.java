@@ -2,6 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
+//reply message sent in response to a request
 public class ReplyMessage implements Serializable {
     int clientId;
     int sourceServer;

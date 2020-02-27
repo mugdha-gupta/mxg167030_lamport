@@ -2,6 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
+//message sent to server from client to ask server to append a message to a file resource
 public class AppendMessage implements Serializable {
     int clientId;
     int fileNum;

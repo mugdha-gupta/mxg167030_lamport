@@ -2,6 +2,8 @@ package Message;
 
 import java.io.Serializable;
 
+//message sent from server executing critical section to prompt other servers to append to files
+//so that the files stay synchronized
 public class ServerAppendMessage implements Serializable {
     int clientId;
     int fileNum;

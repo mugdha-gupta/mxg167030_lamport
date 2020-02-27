@@ -2,6 +2,7 @@ package Message;
 
 import java.io.Serializable;
 
+//message that indicates the synchronization is finished
 public class AckMessage implements Serializable {
     int clientId;
     int fileNum;

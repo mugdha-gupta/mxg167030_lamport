@@ -18,11 +18,13 @@ public class Util {
 
      //returns a socket to a client connection
     static Socket getSocketAsClient(int serverId, int localPort, int remotePort) throws IOException {
+        //set socket address and bind
         Socket socket = new Socket();
         socket.setReuseAddress(true);
         InetSocketAddress localInsa = new InetSocketAddress(InetAddress.getLocalHost(), localPort);
         socket.bind(localInsa);
 
+        //set remote address and connect
         InetSocketAddress remoteInsa = new InetSocketAddress(serverAdresses[serverId-1], remotePort);
         socket.connect(remoteInsa);
         return socket;
@@ -30,6 +32,7 @@ public class Util {
 
     //returns a socket to a server
     static Socket getSocketAsServer(int remotePort) throws IOException {
+        //create listener and wait for connection
         ServerSocket listener = new ServerSocket(remotePort);
         Socket socket = listener.accept();
         listener.close();
