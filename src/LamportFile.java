@@ -120,7 +120,6 @@ public class LamportFile {
 
     synchronized private void setLastReceived(int serverId, int timeStamp) throws IOException {
         lastReceivedTimeFromConnections.put(serverId, timeStamp);
-        System.out.println(lastReceivedTimeFromConnections.toString());
         checkToEnterCS();
     }
 
