@@ -77,7 +77,7 @@ public class FileClient {
         for(ClientSocket socket : clientSockets.values()){
             socket.sendMessage(endMessage);
         }
-
+        System.out.println("*******");
         exit(0);
 
     }
