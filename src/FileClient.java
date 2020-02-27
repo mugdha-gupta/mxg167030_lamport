@@ -71,6 +71,7 @@ public class FileClient {
             //send append message
             clientSockets.get(serverNum).sendMessage(message);
         }
+        System.out.println("*******2222");
 
         //after all the clients are done, send a done message to all the servers
         EndMessage endMessage = new EndMessage();

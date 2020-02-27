@@ -110,8 +110,7 @@ public class Server {
         }
         System.out.println("*********");
         //countdown latch waits until all the servers have sent end message
-        while(latch.getCount() > 0){
-        }
+        latch.await();
         System.out.println("*******");
         exit(0);
 
