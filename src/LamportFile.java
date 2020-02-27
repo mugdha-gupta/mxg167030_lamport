@@ -44,7 +44,7 @@ public class LamportFile {
 
     synchronized void appendToFile(String message) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(filepath, true));
-        bw.write(message);
+        bw.write(message + "\n");
         bw.close();
     }
 

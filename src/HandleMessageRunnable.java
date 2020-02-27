@@ -21,6 +21,9 @@ public class HandleMessageRunnable implements Runnable {
 
         if(message instanceof AppendMessage){
             AppendMessage mess = (AppendMessage) message;
+            System.out.println("server " + server.serverId + " receives: \"" + mess.getMessage() + "\" for file #" +
+                    mess.getFileNum() + " at time: " + System.currentTimeMillis());
+            System.out.println("server " + server.serverId + " attempting to acquire resource");
             file = server.getLamportFile(mess.getFileNum());
             try {
                 file.requestResourceEvent(mess);
@@ -75,6 +78,7 @@ public class HandleMessageRunnable implements Runnable {
                 try {
                     server.clients.get(mess.getClientId()).sendMessage(successMessage);
                     file.releaseResourceEvent();
+                    System.out.println("server " + server.serverId + " sends successful ack to to client " + mess.getClientId());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -27,6 +27,7 @@ public class Server {
     }
 
     Server(int serverId) throws IOException, InterruptedException {
+        System.out.println("server " + serverId + " starts at time: " + System.currentTimeMillis());
         server = this;
         this.serverId = serverId;
         clients = new HashMap<>();
